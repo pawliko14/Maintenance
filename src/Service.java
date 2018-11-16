@@ -315,7 +315,7 @@ public class Service extends JFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-					Notice notka = new Notice();
+					Notice notka = new Notice(Nazwa_nazwa);
 					notka.setVisible(true);
 			
 			}

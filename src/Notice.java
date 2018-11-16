@@ -1,11 +1,14 @@
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.EventQueue;
+import java.awt.Image;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.JTextField;
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import javax.swing.JEditorPane;
@@ -14,13 +17,19 @@ import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.awt.event.ActionEvent;
 
 public class Notice extends JFrame {
@@ -50,8 +59,9 @@ public class Notice extends JFrame {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+				
 				try {
-					Notice frame = new Notice();
+					Notice frame = new Notice("");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -64,35 +74,94 @@ public class Notice extends JFrame {
 	 * Create the frame.
 	 * @throws SQLException 
 	 */
+	private static String GenerujCzas()
+	{
+		Date now = new Date();
+	    SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+	    String datka = dateFormatter.format(now);
+		
+		return datka;
+	}
 	
-	
-	private void Update() throws SQLException
+	private void Update(String Nazwa_maszyny) throws SQLException, IOException
 	{
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
-		
+		File image = null;
 		//String query =  "insert into maszyna_1 (Nr_Maszyny, Tytul,`Data`,Powod,Co_Zrobiono,Kto, Zdjecie)\r\n" + 
 		//		"values ('Maszyna_1', '"+textField.getText()+"', '2018-10-15', '"+editorPane_1.getText()+"', '"+editorPane.getText()+"', '"+textField_2.getText()+"', '')";
 		
-		String query = "insert into maszyna_1 (Nr_Maszyny, Tytul,`Data`,Powod,Co_Zrobiono,Kto, Zdjecie) values (?),(?),(?),(?),(?),(?),(?)";
+		PreparedStatement pst;
+		int option = 0;
 		
-		PreparedStatement pst=connection.prepareStatement(query);		
-		pst.setString(0, "Maszyna_1");
-		pst.setString(1, textField.getText());
-		pst.setString(2, "2018-10-15");
-		pst.setString(3, editorPane_1.getText());
-		pst.setString(4, editorPane.getText());
-		pst.setString(5, textField_2.getText());
-		pst.setBlob(6, inputStream);
-
+		if(sciezka.getText().equals(""))
+		{
+			String query = "insert into "+Nazwa_maszyny+" (Nr_Maszyny, Tytul,`Data`,Powod,Co_Zrobiono,Kto, Zdjecie) values (?,?,?,?,?,?,'')";
+			
+			 pst=connection.prepareStatement(query);		
+			pst.setString(1, Nazwa_maszyny);
+			pst.setString(2, textField.getText());
+			pst.setString(3, GenerujCzas());
+			pst.setString(4, editorPane_1.getText());
+			pst.setString(5, editorPane.getText());
+			pst.setString(6, textField_2.getText());
+		
+		}
+		else
+		{
+			String query = "insert into "+Nazwa_maszyny+" (Nr_Maszyny, Tytul,`Data`,Powod,Co_Zrobiono,Kto, Zdjecie) values (?,?,?,?,?,?,?)";
+			
+			 pst=connection.prepareStatement(query);		
+			pst.setString(1, Nazwa_maszyny);
+			pst.setString(2, textField.getText());
+			pst.setString(3, GenerujCzas());
+			pst.setString(4, editorPane_1.getText());
+			pst.setString(5, editorPane.getText());
+			pst.setString(6, textField_2.getText());
+			pst.setBlob(7, inputStream);
+			
+			option = 1;
+		}
+	
+		
 		ResultSet rs=pst.executeQuery();
-
 		pst.close();
 		rs.close();
+//		
+//		if( option == 0 )
+//		{
+//			   String sql = "select Zdjecie from maszyna_1 where `Data` = '2018-11-16' and Tytul = 'Kotek' ";
+//			    PreparedStatement stmt = connection.prepareStatement(sql);
+//			    ResultSet resultSet = stmt.executeQuery();
+//			    while (resultSet.next())
+//			    {
+//			       image = new File("A:\\java.png");
+//			      FileOutputStream fos = new FileOutputStream(image);
+//
+//			      byte[] buffer = new byte[1];
+//			      InputStream is = resultSet.getBinaryStream(1);
+//				      while (is.read(buffer) > 0)
+//				      {
+//				    	  fos.write(buffer);
+//				      }
+//			      fos.close();
+//			    }
+//			    connection.close();
+//		}	
+//		
+//		File f = new File("A:\\java.png");
+//		Desktop d = Desktop.getDesktop();
+//				d.open(f);
+//		  	
+//		//Image ipcture = ImageIO.read(new File("A:\\java.png"));
+//		  System.out.println("Done.");
+//		 
+		
+		
 
 	}
 	
 	
-	public Notice() {
+	public Notice(String Nazwa_maszyny) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 448, 522);
 		contentPane = new JPanel();
@@ -154,7 +223,7 @@ public class Notice extends JFrame {
 				
 				System.out.println("utworzono nowy rekord");
 				try {
-					Update();
+					Update(Nazwa_maszyny);
 					setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	
 					Notice.this.dispose();		
 					Service.Refresh();
@@ -162,6 +231,9 @@ public class Notice extends JFrame {
 					
 					
 				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

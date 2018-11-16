@@ -47,6 +47,7 @@ public class MachineChoice extends JFrame implements WindowListener  {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				System.exit(0);
 			}
 		});
 	}
@@ -88,6 +89,8 @@ public class MachineChoice extends JFrame implements WindowListener  {
 	 * Create the application.
 	 */
 	public MachineChoice(Connection connection) {
+		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);
 		
 		txtTest = new JTextField();

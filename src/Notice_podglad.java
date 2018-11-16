@@ -9,6 +9,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
 import javax.swing.JEditorPane;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Notice_podglad extends JFrame {
 
@@ -73,7 +75,11 @@ public class Notice_podglad extends JFrame {
 		txtMaszynka.setColumns(10);
 		
 		JButton Zalacznik_1 = new JButton("Zalacznik 1");
-		Zalacznik_1.setEnabled(false);
+		Zalacznik_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 		Zalacznik_1.setBounds(106, 381, 89, 23);
 		contentPane.add(Zalacznik_1);
 		

@@ -1,8 +1,13 @@
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -10,7 +15,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
 import javax.swing.JEditorPane;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
+import java.awt.Font;
+import java.awt.Color;
+import java.awt.SystemColor;
 
 public class Notice_podglad extends JFrame {
 
@@ -19,6 +30,8 @@ public class Notice_podglad extends JFrame {
 	private JTextField txtSerwisant;
 	private JTextField textField_2;
 	private JTextField textData;
+	private JTextField txtDataSerwisu;
+	private JTextField Data_serwisu;
 
 	/**
 	 * Launch the application.
@@ -27,7 +40,7 @@ public class Notice_podglad extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Notice_podglad frame = new Notice_podglad("","","","","","");
+					Notice_podglad frame = new Notice_podglad("","","","","","","","","");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -36,17 +49,92 @@ public class Notice_podglad extends JFrame {
 		});
 	}
 	
-	private void otworzBlob(String Nazwa_maszyny, String Data, String Tytul, String Powod, String Rozwiazanie, String Serwisant)
+	private void Otworz_png(String Kod_maszyny, String Dzial) throws IOException
 	{
-		//String sql = "select* from ";
+		// TRZEBA WYKMINIC JAKI PLIK
+		// jaka strukture zrobic, czy przy kazdym wywolaniu sprawdzac czy istnieje taki podfolder
+		// TRZBA ZROBIC JAKAS METODA REKURENCYJNA, ORAZ SPRAWDDZIC JAK ZAPISAC DOKLADNE
+		// ZDJECIE/ PNG/ WAV ITP ZEBY OTWIERALO SIE Z AUTOMATU
+		
+		File file = new File(Parameters.getPathToMultimedia());
+		boolean exists = file.exists();
+		
+		if(!exists)
+		{
+			System.out.println("file nie istnieje + nazwa maszyny:"+Dzial);
+		}
+		else
+		{
+			System.out.println("istnieje+ nazwa maszyny:" +Dzial);
+			String Dzial_skrocone_pierwsze = Dzial.substring(0,2);  // wyciaga ze stringa tylko 2 pierwsze indexy
+			String Dzial_skrocone_drugie = Dzial.substring(3,Dzial.length());
+			
+			File file2 = new File(Parameters.getPathToMultimedia() + "/" + Dzial_skrocone_pierwsze);
+			boolean exists2 = file2.exists();
+			
+				if(!exists2)
+					System.out.println("file nie istnieje :"+ file2.getAbsolutePath());
+
+				else {
+					System.out.println("istnieje" + file2.getAbsolutePath());
+					
+					
+						File file3 = new File(Parameters.getPathToMultimedia() + "/" + Dzial_skrocone_pierwsze + "/" + Dzial_skrocone_drugie);
+						boolean exists3 = file3.exists();
+						
+							if(!exists3)
+								System.out.println("file nie istnieje :"+ file3.getAbsolutePath());
+	
+							else {
+								System.out.println("istnieje" + file3.getAbsolutePath());
+								
+									File file4 = new File(Parameters.getPathToMultimedia() + "/" + Dzial_skrocone_pierwsze + "/" + Dzial_skrocone_drugie + "/"+ Kod_maszyny);
+									boolean exists4 = file4.exists();
+									
+										if(!exists4)
+											System.out.println("FINALNY nie istnieje :"+ file4.getAbsolutePath());
+				
+										else {
+											System.out.println("FINALNY istnieje" + file4.getAbsolutePath());
+											
+											File imageFile = new File(file4.getAbsolutePath() + "/java.png");
+											BufferedImage image = ImageIO.read(imageFile);
+
+											DisplayImage(image);
+											
+										}
+								
+							}
+						
+				}
+
+			
+
+		}
+		
 	}
+    private void DisplayImage(BufferedImage img) throws IOException
+    {
+    
+        ImageIcon icon=new ImageIcon(img);
+        JFrame frame=new JFrame();
+        frame.getContentPane().setLayout(new FlowLayout());
+        frame.setSize(200,300);
+        JLabel lbl=new JLabel();
+        lbl.setIcon(icon);
+        frame.getContentPane().add(lbl);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
+
 
 	/**
 	 * Create the frame.
 	 */
-	public Notice_podglad(String Nazwa_maszyny,String Data, String Tytul, String Powod, String Rozwiazanie, String Serwisant) {
+	public Notice_podglad(String Nazwa_maszyny,String Data,String Data_serwisu1, String Tytul, String Powod, String Rozwiazanie, String Serwisant, String Dzial,String Kod_maszyny) {
 
-  
+		this.setTitle("Podglad Raportu");
+		
 
 		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -75,7 +163,7 @@ public class Notice_podglad extends JFrame {
 		JTextField txtMaszynka = new JTextField();
 		txtMaszynka.setEditable(false);
 		txtMaszynka.setHorizontalAlignment(SwingConstants.CENTER);
-		txtMaszynka.setBounds(37, 11, 179, 20);
+		txtMaszynka.setBounds(37, 11, 257, 20);
 		txtMaszynka.setText(Nazwa_maszyny);
 		contentPane.add(txtMaszynka);
 		txtMaszynka.setColumns(10);
@@ -84,7 +172,12 @@ public class Notice_podglad extends JFrame {
 		Zalacznik_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				otworzBlob(Nazwa_maszyny, Data,  Tytul,  Powod,  Rozwiazanie,  Serwisant);
+				try {
+					Otworz_png(Kod_maszyny, Dzial);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		Zalacznik_1.setBounds(106, 381, 89, 23);
@@ -108,6 +201,10 @@ public class Notice_podglad extends JFrame {
 		contentPane.add(scrollPane);
 		
 		JEditorPane editorPane_1 = new JEditorPane();
+		editorPane_1.setBackground(SystemColor.control);
+		editorPane_1.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		editorPane_1.setForeground(Color.BLACK);
+		editorPane_1.setEnabled(true);
 		editorPane_1.setEditable(false);	
 		editorPane_1.setText(Powod);
 		
@@ -118,6 +215,10 @@ public class Notice_podglad extends JFrame {
 		contentPane.add(scrollPane_1);
 		
 		JEditorPane editorPane = new JEditorPane();
+		editorPane.setBackground(SystemColor.control);
+		editorPane.setForeground(Color.BLACK);
+		editorPane.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		editorPane.setEnabled(true);
 		editorPane.setEditable(false);
 		editorPane.setText(Rozwiazanie);
 		
@@ -140,6 +241,8 @@ public class Notice_podglad extends JFrame {
 		txtSerwisant.setColumns(10);
 		
 		textField_2 = new JTextField();
+		textField_2.setEditable(false);
+		textField_2.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_2.setBounds(106, 420, 188, 20);
 		textField_2.setText(Serwisant);
 		
@@ -153,6 +256,23 @@ public class Notice_podglad extends JFrame {
 		textData.setBounds(312, 11, 113, 20);
 		textData.setText(Data);
 		contentPane.add(textData);
+		
+		txtDataSerwisu = new JTextField();
+		txtDataSerwisu.setHorizontalAlignment(SwingConstants.CENTER);
+		txtDataSerwisu.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		txtDataSerwisu.setEditable(false);
+		txtDataSerwisu.setText("DATA SERWISU");
+		txtDataSerwisu.setBounds(10, 444, 86, 20);
+		contentPane.add(txtDataSerwisu);
+		txtDataSerwisu.setColumns(10);
+		
+		Data_serwisu = new JTextField();
+		Data_serwisu.setEditable(false);
+		Data_serwisu.setHorizontalAlignment(SwingConstants.CENTER);
+		Data_serwisu.setBounds(106, 444, 116, 20);
+		Data_serwisu.setText(Data_serwisu1);
+		contentPane.add(Data_serwisu);
+		Data_serwisu.setColumns(10);
 	
 	}
 }

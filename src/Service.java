@@ -60,6 +60,9 @@ public class Service extends JFrame {
 	
 	static Connection connection=null;
 	private JScrollPane scrollPane;
+	private JTextField Nr_maszyny;
+	private JTextField Aktywnosc;
+	private JLabel lblNewLabel;
 
 
 	/**
@@ -82,7 +85,7 @@ public class Service extends JFrame {
 	{
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
 		
-		String query = "select * from maszyny where Wydzial = '"+Dzial_nazwa+"' and Nr_Maszyny = '"+Nazwa_nazwa+"'";
+		String query = "select * from maszyny where Wydzial = '"+Dzial_nazwa+"' and Kod = '"+Nazwa_nazwa+"'";
 		
 		PreparedStatement pst=connection.prepareStatement(query);		
 		ResultSet rs=pst.executeQuery();
@@ -90,7 +93,9 @@ public class Service extends JFrame {
 		{
 			Nr_Maszyny.setText(rs.getString("Nr_Maszyny"));
 			Nazwa_maszyny.setText(rs.getString("Nr_Maszyny"));
-			Dzial.setText(rs.getString("Wydzial"));		
+			Dzial.setText(rs.getString("Wydzial"));	
+			Nr_maszyny.setText(rs.getString("Kod"));
+			Aktywnosc.setText(rs.getString("Sprawnosc"));
 		}
 	}
 	
@@ -101,13 +106,13 @@ public class Service extends JFrame {
 		
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
 
-		String query = "select * from "+Nazwa_nazwa+"";
+		String query = "select * from maszyna_1 where Nr_Maszyny = '"+Nazwa_nazwa+"'";
 		
 		PreparedStatement pst=connection.prepareStatement(query);		
 		ResultSet rs=pst.executeQuery();
 		while(rs.next())
 		{
-			Ostatni_serwis.setText(rs.getString("Data"));
+			Ostatni_serwis.setText(rs.getString("Data_serwisu"));
 			Serwisant.setText(rs.getString("Kto"));		
 		}
 		
@@ -116,7 +121,7 @@ public class Service extends JFrame {
 	public static void Refresh()
 	{
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
-		String data = "select  Data, Tytul, Powod, Co_Zrobiono, Kto  from Maszyna_1";
+		String data = "select  Data, Data_serwisu, Tytul, Powod, Co_Zrobiono, Kto  from Maszyna_1 where Nr_Maszyny = '"+Nazwa_nazwa+"'";
 		PreparedStatement pst;
 		try {
 			
@@ -135,10 +140,10 @@ public class Service extends JFrame {
 		  TableColumn column = null;
 		    for (int i = 0; i < Table.getColumnCount(); i++) {
 		        column = Table.getColumnModel().getColumn(i);
-		        if (i == 1) 
-		            column.setPreferredWidth(200);
+		        if (i == 2) 
+		            column.setPreferredWidth(170);
 		        
-		        else  if (i == 0  || i == 4 ) 
+		        else  if (i == 0  || i == 5 || i == 1 ) 
 		            column.setPreferredWidth(20);
 		        
 		         else 
@@ -164,9 +169,13 @@ public class Service extends JFrame {
 	 * @throws SQLException 
 	 */
 	public Service(String dzial, String nazwa) throws SQLException {
+		
+		this.setTitle("Podglad Danych Maszyny");
+		
 		setResizable(false);
 		Dzial_nazwa = dzial;
 		Nazwa_nazwa = nazwa;
+		
 				
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 606, 473);
@@ -183,7 +192,7 @@ public class Service extends JFrame {
 		Image img = new ImageIcon(this.getClass().getResource("tool_white.png")).getImage();
 		
 		Nazwa_maszyny = new JLabel("NAZWA MASZYNY");
-		Nazwa_maszyny.setBounds(109, -2, 169, 20);
+		Nazwa_maszyny.setBounds(109, -2, 334, 20);
 		panel.add(Nazwa_maszyny);
 		Nazwa_maszyny.setForeground(Color.LIGHT_GRAY);
 		Nazwa_maszyny.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -223,7 +232,7 @@ public class Service extends JFrame {
 		txtDzial.setColumns(10);
 		
 		txtOstatniSerwis = new JTextField();
-		txtOstatniSerwis.setBounds(229, 17, 86, 20);
+		txtOstatniSerwis.setBounds(181, 17, 86, 20);
 		Podstawowe_dane.add(txtOstatniSerwis);
 		txtOstatniSerwis.setEditable(false);
 		txtOstatniSerwis.setHorizontalAlignment(SwingConstants.CENTER);
@@ -233,12 +242,8 @@ public class Service extends JFrame {
 		
 		txtOstatniSerwis.setColumns(10);
 		
-		JCheckBox Aktywnosc = new JCheckBox("Aktywnosc");
-		Aktywnosc.setBounds(463, 16, 97, 23);
-		Podstawowe_dane.add(Aktywnosc);
-		
 		txtSerwisant = new JTextField();
-		txtSerwisant.setBounds(229, 48, 86, 20);
+		txtSerwisant.setBounds(181, 48, 86, 20);
 		Podstawowe_dane.add(txtSerwisant);
 		txtSerwisant.setEditable(false);
 		txtSerwisant.setText("Serwisant");
@@ -250,26 +255,43 @@ public class Service extends JFrame {
 		Nr_Maszyny = new JTextField();
 		Nr_Maszyny.setEditable(false);
 		Nr_Maszyny.setBounds(92, 17, 96, 20);
-		Podstawowe_dane.add(Nr_Maszyny);
+		Podstawowe_dane.add(txtSerwisant);
 		Nr_Maszyny.setColumns(10);
 		
 		Dzial = new JTextField();
 		Dzial.setEditable(false);
-		Dzial.setBounds(92, 48, 96, 20);
+		Dzial.setBounds(92, 48, 66, 20);
 		Podstawowe_dane.add(Dzial);
 		Dzial.setColumns(10);
 		
 		Ostatni_serwis = new JTextField();
 		Ostatni_serwis.setEditable(false);
-		Ostatni_serwis.setBounds(325, 17, 76, 20);
+		Ostatni_serwis.setBounds(272, 17, 76, 20);
 		Podstawowe_dane.add(Ostatni_serwis);
 		Ostatni_serwis.setColumns(10);
 		
 		Serwisant = new JTextField();
 		Serwisant.setEditable(false);
-		Serwisant.setBounds(325, 48, 127, 20);
+		Serwisant.setBounds(272, 48, 127, 20);
 		Podstawowe_dane.add(Serwisant);
 		Serwisant.setColumns(10);
+		
+		Nr_maszyny = new JTextField();
+		Nr_maszyny.setEditable(false);
+		Nr_maszyny.setColumns(10);
+		Nr_maszyny.setBounds(92, 17, 66, 20);
+		Podstawowe_dane.add(Nr_maszyny);
+		
+		Aktywnosc = new JTextField();
+		Aktywnosc.setEditable(false);
+		Aktywnosc.setBounds(480, 17, 76, 20);
+		Podstawowe_dane.add(Aktywnosc);
+		Aktywnosc.setColumns(10);
+		
+		lblNewLabel = new JLabel("Aktywnosc");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setBounds(407, 20, 72, 14);
+		Podstawowe_dane.add(lblNewLabel);
 		
 		panel_1 = new JPanel();
 		panel_1.setBackground(Color.LIGHT_GRAY);
@@ -311,7 +333,7 @@ public class Service extends JFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-					Notice notka = new Notice(Nazwa_nazwa);
+					Notice notka = new Notice(Nazwa_nazwa, Dzial.getText(), Nr_maszyny.getText());
 					notka.setVisible(true);
 			
 			}
@@ -344,13 +366,14 @@ public class Service extends JFrame {
 	        	if( event.getValueIsAdjusting()) 
 	        	{
 		            String Data = Table.getValueAt(Table.getSelectedRow(), 0).toString();
-		            String Tytul = Table.getValueAt(Table.getSelectedRow(), 1).toString();
-		            String Powod = Table.getValueAt(Table.getSelectedRow(), 2).toString();		  
-		            String Rozwiazanie = Table.getValueAt(Table.getSelectedRow(), 3).toString();
-		            String Serwisant = Table.getValueAt(Table.getSelectedRow(), 4).toString();
+		            String Data_serwisu = Table.getValueAt(Table.getSelectedRow(), 1).toString();
+		            String Tytul = Table.getValueAt(Table.getSelectedRow(), 2).toString();
+		            String Powod = Table.getValueAt(Table.getSelectedRow(), 3).toString();		  
+		            String Rozwiazanie = Table.getValueAt(Table.getSelectedRow(), 4).toString();
+		            String Serwisant = Table.getValueAt(Table.getSelectedRow(), 5).toString();
 
 
-		            Notice_podglad poglad = new Notice_podglad(Nazwa_maszyny.getText(),Data,Tytul,Powod,Rozwiazanie,Serwisant);
+		            Notice_podglad poglad = new Notice_podglad(Nazwa_maszyny.getText(),Data,Data_serwisu,Tytul,Powod,Rozwiazanie,Serwisant, Dzial.getText(),Nr_maszyny.getText());
 		            poglad.setVisible(true);
 	            
 	        	}	            
@@ -366,6 +389,4 @@ public class Service extends JFrame {
 		 
 		 
 	}
-	
-
 }

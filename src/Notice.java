@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,6 +33,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.awt.event.ActionEvent;
+import java.awt.Font;
 
 public class Notice extends JFrame {
 
@@ -52,6 +54,8 @@ public class Notice extends JFrame {
 	
 	Connection connection=null;
 	private JTextField sciezka;
+	private JTextField textField_3;
+	private JTextField Data_serwisu;
 
 
 	/**
@@ -62,7 +66,7 @@ public class Notice extends JFrame {
 			public void run() {
 				
 				try {
-					Notice frame = new Notice("");
+					Notice frame = new Notice("","","");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -93,7 +97,7 @@ public class Notice extends JFrame {
 		
 		if(sciezka.getText().equals(""))
 		{
-			String query = "insert into "+Nazwa_maszyny+" (Nr_Maszyny, Tytul,`Data`,Powod,Co_Zrobiono,Kto, Zdjecie) values (?,?,?,?,?,?,'')";
+			String query = "insert into maszyna_1 (Nr_Maszyny, Tytul,`Data`,Data_serwisu,Powod,Co_Zrobiono,Kto, Zdjecie) values (?,?,?,?,?,?,?,'')";
 			
 			if(textField.getText().equals("") || editorPane_1.getText().equals("") || editorPane.getText().equals("")) {
 				String st = "Pola nie sa wypelnione";
@@ -101,12 +105,14 @@ public class Notice extends JFrame {
 			}
 			else {
 				pst=connection.prepareStatement(query);		
+				
 				pst.setString(1, Nazwa_maszyny);
 				pst.setString(2, textField.getText());
-				pst.setString(3, GenerujCzas());
-				pst.setString(4, editorPane_1.getText());
-				pst.setString(5, editorPane.getText());
-				pst.setString(6, textField_2.getText());
+				pst.setString(3, Data_serwisu.getText());
+				pst.setString(4, GenerujCzas());
+				pst.setString(5, editorPane_1.getText());
+				pst.setString(6, editorPane.getText());
+				pst.setString(7, textField_2.getText());
 				
 				ResultSet rs=pst.executeQuery();
 				pst.close();
@@ -117,9 +123,9 @@ public class Notice extends JFrame {
 		}
 		else
 		{
-			String query = "insert into "+Nazwa_maszyny+" (Nr_Maszyny, Tytul,`Data`,Powod,Co_Zrobiono,Kto, Zdjecie) values (?,?,?,?,?,?,?)";
+			String query = "insert into "+Nazwa_maszyny+" (Nr_Maszyny, Tytul,`Data`,Data_serwisu,Powod,Co_Zrobiono,Kto, Zdjecie) values (?,?,?,?,?,?,?,?)";
 			
-			if(textField.getText().equals("") || editorPane_1.getText().equals("") || editorPane.getText().equals("")) {
+			if(textField.getText().equals("") || editorPane_1.getText().equals("") || editorPane.getText().equals("") || Data_serwisu.getText().equals("")) {
 				String st = "Pola nie sa wypelnione";
 				JOptionPane.showMessageDialog(null, st);
 			}
@@ -128,11 +134,12 @@ public class Notice extends JFrame {
 				pst=connection.prepareStatement(query);		
 				pst.setString(1, Nazwa_maszyny);
 				pst.setString(2, textField.getText());
-				pst.setString(3, GenerujCzas());
-				pst.setString(4, editorPane_1.getText());
-				pst.setString(5, editorPane.getText());
-				pst.setString(6, textField_2.getText());
-				pst.setBlob(7, inputStream);
+				pst.setString(3, Data_serwisu.getText());
+				pst.setString(4, GenerujCzas());
+				pst.setString(5, editorPane_1.getText());
+				pst.setString(6, editorPane.getText());
+				pst.setString(7, textField_2.getText());
+				pst.setBlob(8, inputStream);
 				
 				ResultSet rs=pst.executeQuery();
 				pst.close();
@@ -178,7 +185,10 @@ public class Notice extends JFrame {
 	}
 	
 	
-	public Notice(String Nazwa_maszyny) {
+	public Notice(String Nazwa_maszyny,String Dzial,String Nr_maszyny) {
+		
+		this.setTitle("Tworzenie Raportu");
+
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 448, 522);
 		contentPane = new JPanel();
@@ -205,7 +215,7 @@ public class Notice extends JFrame {
 		txtMaszynka = new JTextField();
 		txtMaszynka.setEditable(false);
 		txtMaszynka.setHorizontalAlignment(SwingConstants.CENTER);
-		txtMaszynka.setBounds(37, 11, 126, 20);
+		txtMaszynka.setBounds(37, 11, 249, 20);
 		contentPane.add(txtMaszynka);
 		txtMaszynka.setColumns(10);
 		
@@ -240,8 +250,12 @@ public class Notice extends JFrame {
 				
 				System.out.println("utworzono nowy rekord");
 				try {
+					
+					copyDirectory(selectedFile, Sciezka_do_multimediow(Dzial,Nr_maszyny));
+
 					Update(Nazwa_maszyny);
-					setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	
+								
+				
 					Notice.this.dispose();		
 					Service.Refresh();
 
@@ -290,12 +304,13 @@ public class Notice extends JFrame {
 		txtSerwisant.setEditable(false);
 		txtSerwisant.setHorizontalAlignment(SwingConstants.CENTER);
 		txtSerwisant.setText("SERWISANT");
-		txtSerwisant.setBounds(10, 416, 86, 20);
+		txtSerwisant.setBounds(10, 419, 86, 20);
 		contentPane.add(txtSerwisant);
 		txtSerwisant.setColumns(10);
 		
 		textField_2 = new JTextField();
-		textField_2.setBounds(106, 415, 186, 20);
+		textField_2.setHorizontalAlignment(SwingConstants.CENTER);
+		textField_2.setBounds(106, 419, 186, 20);
 		contentPane.add(textField_2);
 		textField_2.setColumns(10);
 		
@@ -311,5 +326,73 @@ public class Notice extends JFrame {
 		sciezka.setBounds(206, 382, 216, 20);
 		contentPane.add(sciezka);
 		sciezka.setColumns(10);
+		
+		textField_3 = new JTextField();
+		textField_3.setHorizontalAlignment(SwingConstants.CENTER);
+		textField_3.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		textField_3.setText("DATA SERWISU");
+		textField_3.setEditable(false);
+		textField_3.setColumns(10);
+		textField_3.setBounds(10, 450, 86, 20);
+		contentPane.add(textField_3);
+		
+		Data_serwisu = new JTextField();
+		Data_serwisu.setHorizontalAlignment(SwingConstants.CENTER);
+		Data_serwisu.setColumns(10);
+		Data_serwisu.setBounds(106, 451, 113, 20);
+		contentPane.add(Data_serwisu);
 	}
+	
+	private File Sciezka_do_multimediow(String Dzial, String Kod_maszyny)
+	{
+		
+		System.out.println("istnieje+ nazwa maszyny:" + Dzial);
+		String Dzial_skrocone_pierwsze = Dzial.substring(0,2);  // wyciaga ze stringa tylko 2 pierwsze indexy
+		String Dzial_skrocone_drugie = Dzial.substring(3,Dzial.length());
+		
+		File file4 = new File(Parameters.getPathToMultimedia() + "/" + Dzial_skrocone_pierwsze + "/" + Dzial_skrocone_drugie + "/"+ Kod_maszyny);
+		boolean exists4 = file4.exists();
+		
+		if(!exists4)
+			System.out.println("FINALNY nie istnieje :"+ file4.getAbsolutePath());
+
+		else {
+			System.out.println("FINALNY istnieje" + file4.getAbsolutePath());
+			
+			 return file4;
+		}
+
+		return file4;
+	}
+	
+	public void copyDirectory(File sourceLocation , File targetLocation)
+		    throws IOException {
+
+		        if (sourceLocation.isDirectory()) {
+		            if (!targetLocation.exists()) {
+		                targetLocation.mkdir();
+		            }
+
+		            String[] children = sourceLocation.list();
+		            for (int i=0; i<children.length; i++) {
+		                copyDirectory(new File(sourceLocation, children[i]),
+		                        new File(targetLocation, children[i]));
+		            }
+		        } else {
+
+		            InputStream in = new FileInputStream(sourceLocation);
+		            OutputStream out = new FileOutputStream(targetLocation);
+
+		            // Copy the bits from instream to outstream
+		            byte[] buf = new byte[1024];
+		            int len;
+		            while ((len = in.read(buf)) > 0) {
+		                out.write(buf, 0, len);
+		            }
+		            in.close();
+		            out.close();
+		        }
+		    }
+
+	
 }

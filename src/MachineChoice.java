@@ -73,14 +73,14 @@ public class MachineChoice extends JFrame implements WindowListener  {
 	{
 		PreparedStatement st = null;
 		ResultSet rs = null; 
-		String sql1 = "select Nr_Maszyny from maszyny where Wydzial = '"+selectedValue+"' ";
+		String sql1 = "select Kod from maszyny where Wydzial = '"+selectedValue+"' ";
 		
 		st = connection.prepareStatement(sql1);
 		rs = st.executeQuery();
 		
 		while(rs.next())
 		{
-			String Name = rs.getString("Nr_Maszyny");
+			String Name = rs.getString("Kod");
 			comboBox_Nazwa.addItem(Name);
 		}
 	}
@@ -89,6 +89,9 @@ public class MachineChoice extends JFrame implements WindowListener  {
 	 * Create the application.
 	 */
 	public MachineChoice(Connection connection) {
+		
+		this.setTitle("Wybor Maszyny");
+
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);

@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import java.awt.Image;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileSystemView;
@@ -87,45 +88,61 @@ public class Notice extends JFrame {
 	{
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
 		File image = null;
-		//String query =  "insert into maszyna_1 (Nr_Maszyny, Tytul,`Data`,Powod,Co_Zrobiono,Kto, Zdjecie)\r\n" + 
-		//		"values ('Maszyna_1', '"+textField.getText()+"', '2018-10-15', '"+editorPane_1.getText()+"', '"+editorPane.getText()+"', '"+textField_2.getText()+"', '')";
-		
-		PreparedStatement pst;
+		PreparedStatement pst = null;
 		int option = 0;
 		
 		if(sciezka.getText().equals(""))
 		{
 			String query = "insert into "+Nazwa_maszyny+" (Nr_Maszyny, Tytul,`Data`,Powod,Co_Zrobiono,Kto, Zdjecie) values (?,?,?,?,?,?,'')";
 			
-			 pst=connection.prepareStatement(query);		
-			pst.setString(1, Nazwa_maszyny);
-			pst.setString(2, textField.getText());
-			pst.setString(3, GenerujCzas());
-			pst.setString(4, editorPane_1.getText());
-			pst.setString(5, editorPane.getText());
-			pst.setString(6, textField_2.getText());
+			if(textField.getText().equals("") || editorPane_1.getText().equals("") || editorPane.getText().equals("")) {
+				String st = "Pola nie sa wypelnione";
+				JOptionPane.showMessageDialog(null, st);
+			}
+			else {
+				pst=connection.prepareStatement(query);		
+				pst.setString(1, Nazwa_maszyny);
+				pst.setString(2, textField.getText());
+				pst.setString(3, GenerujCzas());
+				pst.setString(4, editorPane_1.getText());
+				pst.setString(5, editorPane.getText());
+				pst.setString(6, textField_2.getText());
+				
+				ResultSet rs=pst.executeQuery();
+				pst.close();
+				rs.close();
+			}
+			
 		
 		}
 		else
 		{
 			String query = "insert into "+Nazwa_maszyny+" (Nr_Maszyny, Tytul,`Data`,Powod,Co_Zrobiono,Kto, Zdjecie) values (?,?,?,?,?,?,?)";
 			
-			 pst=connection.prepareStatement(query);		
-			pst.setString(1, Nazwa_maszyny);
-			pst.setString(2, textField.getText());
-			pst.setString(3, GenerujCzas());
-			pst.setString(4, editorPane_1.getText());
-			pst.setString(5, editorPane.getText());
-			pst.setString(6, textField_2.getText());
-			pst.setBlob(7, inputStream);
+			if(textField.getText().equals("") || editorPane_1.getText().equals("") || editorPane.getText().equals("")) {
+				String st = "Pola nie sa wypelnione";
+				JOptionPane.showMessageDialog(null, st);
+			}
+			else {
 			
+				pst=connection.prepareStatement(query);		
+				pst.setString(1, Nazwa_maszyny);
+				pst.setString(2, textField.getText());
+				pst.setString(3, GenerujCzas());
+				pst.setString(4, editorPane_1.getText());
+				pst.setString(5, editorPane.getText());
+				pst.setString(6, textField_2.getText());
+				pst.setBlob(7, inputStream);
+				
+				ResultSet rs=pst.executeQuery();
+				pst.close();
+				rs.close();
+			}
 			option = 1;
-		}
-	
-		
-		ResultSet rs=pst.executeQuery();
-		pst.close();
-		rs.close();
+			
+			
+		}	
+
 //		
 //		if( option == 0 )
 //		{

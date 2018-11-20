@@ -27,7 +27,7 @@ public class Notice_podglad extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Notice_podglad frame = new Notice_podglad("","","","","");
+					Notice_podglad frame = new Notice_podglad("","","","","","");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -35,11 +35,16 @@ public class Notice_podglad extends JFrame {
 			}
 		});
 	}
+	
+	private void otworzBlob(String Nazwa_maszyny, String Data, String Tytul, String Powod, String Rozwiazanie, String Serwisant)
+	{
+		//String sql = "select* from ";
+	}
 
 	/**
 	 * Create the frame.
 	 */
-	public Notice_podglad(String Data, String Tytul, String Powod, String Rozwiazanie, String Serwisant) {
+	public Notice_podglad(String Nazwa_maszyny,String Data, String Tytul, String Powod, String Rozwiazanie, String Serwisant) {
 
   
 
@@ -71,6 +76,7 @@ public class Notice_podglad extends JFrame {
 		txtMaszynka.setEditable(false);
 		txtMaszynka.setHorizontalAlignment(SwingConstants.CENTER);
 		txtMaszynka.setBounds(37, 11, 179, 20);
+		txtMaszynka.setText(Nazwa_maszyny);
 		contentPane.add(txtMaszynka);
 		txtMaszynka.setColumns(10);
 		
@@ -78,6 +84,7 @@ public class Notice_podglad extends JFrame {
 		Zalacznik_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
+				otworzBlob(Nazwa_maszyny, Data,  Tytul,  Powod,  Rozwiazanie,  Serwisant);
 			}
 		});
 		Zalacznik_1.setBounds(106, 381, 89, 23);

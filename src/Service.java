@@ -151,14 +151,10 @@ public class Service extends JFrame {
 	}
 	
 	 private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {                                     
-	 //    JTable source = (JTable)evt.getSource();
 	            int row = Table.rowAtPoint( evt.getPoint() );
 	            int column = Table.columnAtPoint( evt.getPoint() );
 	            String s=Table.getModel().getValueAt(row, column)+"";
-
 	            JOptionPane.showMessageDialog(null, s);
-
-
 	} 
 	
 	
@@ -345,24 +341,16 @@ public class Service extends JFrame {
 		
 		Table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
 	        public void valueChanged(ListSelectionEvent event) {
-	            // do some actions here, for example
-	            // print first column value from selected row
 	        	if( event.getValueIsAdjusting()) 
 	        	{
-	        		
-		            System.out.println(Table.getValueAt(Table.getSelectedRow(), 0).toString());
-	
-		      
 		            String Data = Table.getValueAt(Table.getSelectedRow(), 0).toString();
 		            String Tytul = Table.getValueAt(Table.getSelectedRow(), 1).toString();
 		            String Powod = Table.getValueAt(Table.getSelectedRow(), 2).toString();		  
 		            String Rozwiazanie = Table.getValueAt(Table.getSelectedRow(), 3).toString();
 		            String Serwisant = Table.getValueAt(Table.getSelectedRow(), 4).toString();
 
-		            
-		            
-		            
-		            Notice_podglad poglad = new Notice_podglad(Data,Tytul,Powod,Rozwiazanie,Serwisant);
+
+		            Notice_podglad poglad = new Notice_podglad(Nazwa_maszyny.getText(),Data,Tytul,Powod,Rozwiazanie,Serwisant);
 		            poglad.setVisible(true);
 	            
 	        	}	            

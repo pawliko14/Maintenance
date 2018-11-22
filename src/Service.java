@@ -106,7 +106,7 @@ public class Service extends JFrame {
 		
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
 
-		String query = "select * from maszyna_1 where Nr_Maszyny = '"+Nazwa_nazwa+"'";
+		String query = "select * from serwisowane where Nr_Maszyny = '"+Nazwa_nazwa+"'";
 		
 		PreparedStatement pst=connection.prepareStatement(query);		
 		ResultSet rs=pst.executeQuery();
@@ -121,7 +121,7 @@ public class Service extends JFrame {
 	public static void Refresh()
 	{
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
-		String data = "select  Data, Data_serwisu, Tytul, Powod, Co_Zrobiono, Kto  from Maszyna_1 where Nr_Maszyny = '"+Nazwa_nazwa+"'";
+		String data = "select  Data, Data_serwisu, Tytul, Powod, Co_Zrobiono, Kto  from serwisowane where Nr_Maszyny = '"+Nazwa_nazwa+"'";
 		PreparedStatement pst;
 		try {
 			

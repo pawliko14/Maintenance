@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.Image;
@@ -18,6 +19,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -286,19 +289,80 @@ public class Notice extends JFrame {
 		contentPane.add(scrollPane);
 		
 		editorPane_1 = new JEditorPane();
+		editorPane_1.setText("Powod serwisu");
+		editorPane_1.setForeground(Color.gray);
 		scrollPane.setViewportView(editorPane_1);
+		
+		
+		editorPane_1.addFocusListener(new FocusListener() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        if (editorPane_1.getText().equals("Powod serwisu")) {
+		        	editorPane_1.setText("");
+		        	editorPane_1.setForeground(Color.BLACK);
+		        }
+		    }
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        if (editorPane_1.getText().isEmpty()) {
+		        	editorPane_1.setForeground(Color.GRAY);
+		        	editorPane_1.setText("Powod serwisu");
+		        }
+		    }
+		    });
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBounds(106, 203, 317, 167);
 		contentPane.add(scrollPane_1);
 		
 		editorPane = new JEditorPane();
+		editorPane.setText("Co zostalo zrobione / zdiagnozowane");
+		editorPane.setForeground(Color.gray);
 		scrollPane_1.setViewportView(editorPane);
 		
-		textField = new JTextField();
+		editorPane.addFocusListener(new FocusListener() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        if (editorPane.getText().equals("Co zostalo zrobione / zdiagnozowane")) {
+		        	editorPane.setText("");
+		        	editorPane.setForeground(Color.BLACK);
+		        }
+		    }
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        if (editorPane.getText().isEmpty()) {
+		        	editorPane.setForeground(Color.GRAY);
+		        	editorPane.setText("Co zostalo zrobione/zdiagnozowane");
+		        }
+		    }
+		    });
+		
+		
+		
+		textField = new JTextField("Skrocony opis raportu");
+		textField.setForeground(Color.gray);
 		textField.setBounds(109, 42, 314, 20);
 		contentPane.add(textField);
 		textField.setColumns(10);
+		
+		
+		textField.addFocusListener(new FocusListener() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        if (textField.getText().equals("Skrocony opis raportu")) {
+		        	textField.setText("");
+		        	textField.setForeground(Color.BLACK);
+		        }
+		    }
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        if (textField.getText().isEmpty()) {
+		        	textField.setForeground(Color.GRAY);
+		        	textField.setText("Skrocony opis raportu");
+		        }
+		    }
+		    });
+		
 		
 		txtSerwisant = new JTextField();
 		txtSerwisant.setEditable(false);
@@ -308,11 +372,29 @@ public class Notice extends JFrame {
 		contentPane.add(txtSerwisant);
 		txtSerwisant.setColumns(10);
 		
-		textField_2 = new JTextField();
+		textField_2 = new JTextField("Imie Nazwisko");
+		textField_2.setForeground(Color.gray);
 		textField_2.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_2.setBounds(106, 419, 186, 20);
 		contentPane.add(textField_2);
 		textField_2.setColumns(10);
+		
+		textField_2.addFocusListener(new FocusListener() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        if (textField_2.getText().equals("Imie Nazwisko")) {
+		        	textField_2.setText("");
+		        	textField_2.setForeground(Color.BLACK);
+		        }
+		    }
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        if (textField_2.getText().isEmpty()) {
+		        	textField_2.setForeground(Color.GRAY);
+		        	textField_2.setText("Imie Nazwisko");
+		        }
+		    }
+		    });
 		
 		textField_1 = new JTextField();
 		textField_1.setHorizontalAlignment(SwingConstants.CENTER);
@@ -336,11 +418,30 @@ public class Notice extends JFrame {
 		textField_3.setBounds(10, 450, 86, 20);
 		contentPane.add(textField_3);
 		
-		Data_serwisu = new JTextField();
+		Data_serwisu = new JTextField("2018-11-24");
+		Data_serwisu.setForeground(Color.gray);
 		Data_serwisu.setHorizontalAlignment(SwingConstants.CENTER);
 		Data_serwisu.setColumns(10);
 		Data_serwisu.setBounds(106, 451, 113, 20);
 		contentPane.add(Data_serwisu);
+		
+		
+		Data_serwisu.addFocusListener(new FocusListener() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        if (Data_serwisu.getText().equals("2018-11-24")) {
+		        	Data_serwisu.setText("");
+		        	Data_serwisu.setForeground(Color.BLACK);
+		        }
+		    }
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        if (Data_serwisu.getText().isEmpty()) {
+		        	Data_serwisu.setForeground(Color.GRAY);
+		        	Data_serwisu.setText("2018-11-24");
+		        }
+		    }
+		    });
 	}
 	
 	private File Sciezka_do_multimediow(String Dzial, String Kod_maszyny)

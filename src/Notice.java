@@ -9,6 +9,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileSystemView;
+
+import org.jfree.util.Log;
+
 import javax.swing.JTextField;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -22,6 +25,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -53,12 +59,16 @@ public class Notice extends JFrame {
 	private JEditorPane editorPane;
 	
 	private File selectedFile;
+	private File selectedFile_2;
 	private FileInputStream inputStream;
 	
 	Connection connection=null;
 	private JTextField sciezka;
 	private JTextField textField_3;
 	private JTextField Data_serwisu;
+	private JTextField sciezka_2;
+	
+	private String Nazwa_pliku_do_bazy;
 
 
 	/**
@@ -91,18 +101,25 @@ public class Notice extends JFrame {
 		return datka;
 	}
 	
-	private void Update(String Nazwa_maszyny) throws SQLException, IOException
+	private void Update(String Nazwa_maszyny,String Dzial, String Nr_maszyny) throws SQLException, IOException
 	{
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
 		File image = null;
 		PreparedStatement pst = null;
 		int option = 0;
 		
-		if(sciezka.getText().equals(""))
+		
+		// PIERWSZA MOZLIWOSC, KIEDY  OBIE SCIEZKI SA PUSTE, - PLKIKI NIE ZOSTALY WYBRANE
+		// ZAPISUJE WTEDY DO BAZY PUSTE POLA ( W MIEJSCU SCIEZEK)
+		
+		// dziala dobrze
+		if(sciezka.getText().equals("") || sciezka_2.getText().equals(""))
 		{
-			String query = "insert into maszyna_1 (Nr_Maszyny, Tytul,`Data`,Data_serwisu,Powod,Co_Zrobiono,Kto, Zdjecie) values (?,?,?,?,?,?,?,'')";
+			System.out.println("obie sciezki sa puste");
 			
-			if(textField.getText().equals("") || editorPane_1.getText().equals("") || editorPane.getText().equals("")) {
+			String query = "insert into serwisowane (Nr_Maszyny, Tytul,`Data`,Data_serwisu,Powod,Co_Zrobiono,Kto, Zdjecie,Sciezka_1,Sciezka_2) values (?,?,?,?,?,?,?,'',?,?)";
+			
+			if(textField.getText().equals("Skrocony opis raportu") || editorPane_1.getText().equals("Co zostalo zrobione / zdiagnozowane") || editorPane.getText().equals("Powod serwisu") || Data_serwisu.getText().equals("2018-11-24")) {
 				String st = "Pola nie sa wypelnione";
 				JOptionPane.showMessageDialog(null, st);
 			}
@@ -116,6 +133,9 @@ public class Notice extends JFrame {
 				pst.setString(5, editorPane_1.getText());
 				pst.setString(6, editorPane.getText());
 				pst.setString(7, textField_2.getText());
+				pst.setString(8, "");
+				pst.setString(9, "");
+
 				
 				ResultSet rs=pst.executeQuery();
 				pst.close();
@@ -124,11 +144,17 @@ public class Notice extends JFrame {
 			
 		
 		}
-		else
+		// kiedy obie sciezki sa wypelnione, 
+		// czyli kiedy pojawiaja sie oba zalaczniki
+		else if(!sciezka.getText().equals("") && !sciezka_2.getText().equals(""))
 		{
-			String query = "insert into "+Nazwa_maszyny+" (Nr_Maszyny, Tytul,`Data`,Data_serwisu,Powod,Co_Zrobiono,Kto, Zdjecie) values (?,?,?,?,?,?,?,?)";
+			System.out.println("obie sciezki sa w uzyciu");
+			Nazwa_pliku_do_bazy = sciezka.getText();
 			
-			if(textField.getText().equals("") || editorPane_1.getText().equals("") || editorPane.getText().equals("") || Data_serwisu.getText().equals("")) {
+			
+			String query = "insert into serwisowane (Nr_Maszyny, Tytul,`Data`,Data_serwisu,Powod,Co_Zrobiono,Kto, Zdjecie,Sciezka_1,Sciezka_2) values (?,?,?,?,?,?,?,'',?,?)";
+			
+			if(textField.getText().equals("Skrocony opis raportu") || editorPane_1.getText().equals("Co zostalo zrobione / zdiagnozowane") || editorPane.getText().equals("Powod serwisu") || Data_serwisu.getText().equals("2018-11-24")) {
 				String st = "Pola nie sa wypelnione";
 				JOptionPane.showMessageDialog(null, st);
 			}
@@ -142,16 +168,21 @@ public class Notice extends JFrame {
 				pst.setString(5, editorPane_1.getText());
 				pst.setString(6, editorPane.getText());
 				pst.setString(7, textField_2.getText());
-				pst.setBlob(8, inputStream);
+				pst.setString(8, Sciezka_do_multimediow(Dzial,Nr_maszyny).toString());  // Sciezka_do_multimediow(Dzial,Nr_maszyny) <- to powinno byc zapisane ale brak dzial i nr maszyny
+				pst.setString(9, sciezka_2.getText());
 				
 				ResultSet rs=pst.executeQuery();
 				pst.close();
 				rs.close();
 			}
 			option = 1;
-			
-			
+
 		}	
+		
+		else 
+		{
+			System.out.println("Jakis problem, sprawdz");
+		}
 
 //		
 //		if( option == 0 )
@@ -193,7 +224,7 @@ public class Notice extends JFrame {
 		this.setTitle("Tworzenie Raportu");
 
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 448, 522);
+		setBounds(100, 100, 450, 570);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -232,19 +263,14 @@ public class Notice extends JFrame {
 
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 					selectedFile = jfc.getSelectedFile();
-					try {
-						inputStream= new FileInputStream(selectedFile);
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					
 					System.out.println(selectedFile.getAbsolutePath());				
 					sciezka.setText(selectedFile.getAbsolutePath());				
 				}
 				
 			}
 		});
-		Zalacznik_1.setBounds(106, 381, 89, 23);
+		Zalacznik_1.setBounds(10, 381, 89, 23);
 		contentPane.add(Zalacznik_1);
 		
 		JButton Zapisz = new JButton("Zapisz");
@@ -254,11 +280,13 @@ public class Notice extends JFrame {
 				System.out.println("utworzono nowy rekord");
 				try {
 					
-					copyDirectory(selectedFile, Sciezka_do_multimediow(Dzial,Nr_maszyny));
+					int pierwszy_znak = licz_znak_1(sciezka.getText());    // wyciaganie pierwszego '/' ze stringa ( w sensie ostaneigo)
+					Nazwa_pliku_do_bazy = sciezka.getText().substring(pierwszy_znak, sciezka.getText().length());
+					
+					copyFileUsingJava7Files(selectedFile,Sciezka_do_multimediow(Dzial,Nr_maszyny));
 
-					Update(Nazwa_maszyny);
+					Update(Nazwa_maszyny,Dzial,Nr_maszyny);
 								
-				
 					Notice.this.dispose();		
 					Service.Refresh();
 
@@ -273,7 +301,7 @@ public class Notice extends JFrame {
 				}
 			}
 		});
-		Zapisz.setBounds(333, 450, 89, 23);
+		Zapisz.setBounds(335, 468, 89, 23);
 		contentPane.add(Zapisz);
 		
 		txtTytul = new JTextField();
@@ -368,14 +396,14 @@ public class Notice extends JFrame {
 		txtSerwisant.setEditable(false);
 		txtSerwisant.setHorizontalAlignment(SwingConstants.CENTER);
 		txtSerwisant.setText("SERWISANT");
-		txtSerwisant.setBounds(10, 419, 86, 20);
+		txtSerwisant.setBounds(10, 471, 86, 20);
 		contentPane.add(txtSerwisant);
 		txtSerwisant.setColumns(10);
 		
 		textField_2 = new JTextField("Imie Nazwisko");
 		textField_2.setForeground(Color.gray);
 		textField_2.setHorizontalAlignment(SwingConstants.CENTER);
-		textField_2.setBounds(106, 419, 186, 20);
+		textField_2.setBounds(109, 471, 186, 20);
 		contentPane.add(textField_2);
 		textField_2.setColumns(10);
 		
@@ -405,7 +433,7 @@ public class Notice extends JFrame {
 		
 		sciezka = new JTextField();
 		sciezka.setEditable(false);
-		sciezka.setBounds(206, 382, 216, 20);
+		sciezka.setBounds(109, 382, 313, 20);
 		contentPane.add(sciezka);
 		sciezka.setColumns(10);
 		
@@ -415,15 +443,42 @@ public class Notice extends JFrame {
 		textField_3.setText("DATA SERWISU");
 		textField_3.setEditable(false);
 		textField_3.setColumns(10);
-		textField_3.setBounds(10, 450, 86, 20);
+		textField_3.setBounds(10, 502, 86, 20);
 		contentPane.add(textField_3);
 		
 		Data_serwisu = new JTextField("2018-11-24");
 		Data_serwisu.setForeground(Color.gray);
 		Data_serwisu.setHorizontalAlignment(SwingConstants.CENTER);
 		Data_serwisu.setColumns(10);
-		Data_serwisu.setBounds(106, 451, 113, 20);
+		Data_serwisu.setBounds(111, 501, 113, 20);
 		contentPane.add(Data_serwisu);
+		
+		JButton Zalacznik_2 = new JButton("Zalacznik 2");
+		Zalacznik_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+				
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					selectedFile_2 = jfc.getSelectedFile();
+					
+					System.out.println(selectedFile_2.getAbsolutePath());				
+					sciezka_2.setText(selectedFile_2.getAbsolutePath());				
+				}
+				
+				
+			}
+		});
+		Zalacznik_2.setBounds(10, 415, 89, 23);
+		contentPane.add(Zalacznik_2);
+		
+		sciezka_2 = new JTextField();
+		sciezka_2.setEditable(false);
+		sciezka_2.setColumns(10);
+		sciezka_2.setBounds(109, 416, 315, 20);
+		contentPane.add(sciezka_2);
 		
 		
 		Data_serwisu.addFocusListener(new FocusListener() {
@@ -451,7 +506,7 @@ public class Notice extends JFrame {
 		String Dzial_skrocone_pierwsze = Dzial.substring(0,2);  // wyciaga ze stringa tylko 2 pierwsze indexy
 		String Dzial_skrocone_drugie = Dzial.substring(3,Dzial.length());
 		
-		File file4 = new File(Parameters.getPathToMultimedia() + "/" + Dzial_skrocone_pierwsze + "/" + Dzial_skrocone_drugie + "/"+ Kod_maszyny);
+		File file4 = new File(Parameters.getPathToMultimedia() + "/" + Dzial_skrocone_pierwsze + "/" + Dzial_skrocone_drugie + "/"+ Kod_maszyny + "/" + Nazwa_pliku_do_bazy );
 		boolean exists4 = file4.exists();
 		
 		if(!exists4)
@@ -466,34 +521,31 @@ public class Notice extends JFrame {
 		return file4;
 	}
 	
-	public void copyDirectory(File sourceLocation , File targetLocation)
-		    throws IOException {
 
-		        if (sourceLocation.isDirectory()) {
-		            if (!targetLocation.exists()) {
-		                targetLocation.mkdir();
-		            }
+	 private static void copyFileUsingJava7Files(File source, File dest) throws IOException {
+		    Files.copy(source.toPath(), dest.toPath());
+		}
+	 
+	 private int licz_znak_1(String sciezka)
+	 {
+		 int l_znakow = sciezka.length();
+		 int licznik = 0;
+		 
+		 System.out.println("liczba znakow przed:"+ sciezka.length());
+		 
+		 int i=0;
+		 for(i = l_znakow; i > 0; i--)
+		 {
+			 char a_char = sciezka.charAt(i-1);
+			 	if(a_char == '\\')
+			 	{ 		
+					 System.out.println("liczba znakow PO:" + i);
+			 		break;
+			 	}
+		 }
+		 return i;
+		 
+	 }
+	 
 
-		            String[] children = sourceLocation.list();
-		            for (int i=0; i<children.length; i++) {
-		                copyDirectory(new File(sourceLocation, children[i]),
-		                        new File(targetLocation, children[i]));
-		            }
-		        } else {
-
-		            InputStream in = new FileInputStream(sourceLocation);
-		            OutputStream out = new FileOutputStream(targetLocation);
-
-		            // Copy the bits from instream to outstream
-		            byte[] buf = new byte[1024];
-		            int len;
-		            while ((len = in.read(buf)) > 0) {
-		                out.write(buf, 0, len);
-		            }
-		            in.close();
-		            out.close();
-		        }
-		    }
-
-	
 }

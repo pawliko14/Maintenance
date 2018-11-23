@@ -60,6 +60,7 @@ public class Serwisant_podglad extends JFrame {
 		contentPane.setLayout(null);
 
 		Serwisant = new JTextField();
+		Serwisant.setEditable(false);
 		Serwisant.setFont(new Font("Tahoma", Font.BOLD, 13));
 		Serwisant.setHorizontalAlignment(SwingConstants.CENTER);
 		Serwisant.setBounds(183, 11, 278, 20);
@@ -86,10 +87,12 @@ public class Serwisant_podglad extends JFrame {
 					String Tytul = Table.getValueAt(Table.getSelectedRow(), 1).toString();
 					String Powod = Table.getValueAt(Table.getSelectedRow(), 3).toString();
 					String Rozwiazanie = Table.getValueAt(Table.getSelectedRow(), 4).toString();
+					String Sciezka_1 = Table.getValueAt(Table.getSelectedRow(), 5).toString();
+					String Sciezka_2 = Table.getValueAt(Table.getSelectedRow(), 6).toString();
 					// String Serwisant = Table.getValueAt(Table.getSelectedRow(), 5).toString();
 
 					Notice_podglad poglad = new Notice_podglad(Nazwa_maszyny, Data, Data_serwisu, Tytul, Powod,
-							Rozwiazanie, serwisancik, Wydzial, Kod_maszyny);
+							Rozwiazanie, serwisancik, Wydzial, Kod_maszyny,Sciezka_1,Sciezka_2);
 					poglad.setVisible(true);
 
 				}
@@ -126,8 +129,8 @@ public class Serwisant_podglad extends JFrame {
 
 	public static void Refresh(String serwisancik) {
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
-		String data = "select Nr_maszyny,Tytul,Data_serwisu,Powod,Co_Zrobiono from serwisowane where Kto = '"
-				+ serwisancik + "'";
+		String data = "select Nr_maszyny,Tytul,Data_serwisu,Powod,Co_Zrobiono,Sciezka_1, Sciezka_2 from serwisowane where Kto = '"
+				+ serwisancik + "' ";
 		PreparedStatement pst;
 		try {
 

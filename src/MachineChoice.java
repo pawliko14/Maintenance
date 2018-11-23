@@ -231,13 +231,8 @@ public class MachineChoice extends JFrame implements WindowListener  {
 		getContentPane().add(txtWyborSerwisanta);
 		
 		comboBox_Serwisant = new JComboBox();
-		comboBox_Serwisant.setBounds(430, 42, 100, 20);
+		comboBox_Serwisant.setBounds(430, 42, 166, 20);
 		getContentPane().add(comboBox_Serwisant);
-		
-		JButton ok_serwisant = new JButton("OK");
-		ok_serwisant.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		ok_serwisant.setBounds(540, 41, 56, 23);
-		getContentPane().add(ok_serwisant);
 		
 		txtSerwisant = new JTextField();
 		txtSerwisant.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -255,7 +250,7 @@ public class MachineChoice extends JFrame implements WindowListener  {
 				podglad.setVisible(true);
 			}
 		});
-		OK_button1.setBounds(418, 80, 89, 23);
+		OK_button1.setBounds(336, 80, 260, 23);
 		getContentPane().add(OK_button1);
 		initialize();
 	}

@@ -8,6 +8,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.SystemColor;
 
 public class Notice_podglad extends JFrame {
@@ -32,6 +34,8 @@ public class Notice_podglad extends JFrame {
 	private JTextField textData;
 	private JTextField txtDataSerwisu;
 	private JTextField Data_serwisu;
+	private JTextField sciezka_1;
+	private JTextField sciezka_2;
 
 	/**
 	 * Launch the application.
@@ -40,7 +44,7 @@ public class Notice_podglad extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Notice_podglad frame = new Notice_podglad("","","","","","","","","");
+					Notice_podglad frame = new Notice_podglad("","","","","","","","","","","");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -113,7 +117,8 @@ public class Notice_podglad extends JFrame {
 		}
 		
 	}
-    private void DisplayImage(BufferedImage img) throws IOException
+
+	private void DisplayImage(BufferedImage img) throws IOException
     {
     
         ImageIcon icon=new ImageIcon(img);
@@ -131,14 +136,14 @@ public class Notice_podglad extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Notice_podglad(String Nazwa_maszyny,String Data,String Data_serwisu1, String Tytul, String Powod, String Rozwiazanie, String Serwisant, String Dzial,String Kod_maszyny) {
+	public Notice_podglad(String Nazwa_maszyny,String Data,String Data_serwisu1, String Tytul, String Powod, String Rozwiazanie, String Serwisant, String Dzial,String Kod_maszyny,String sciezka_do_zdj1, String sciezka_do_zdj2) {
 
 		this.setTitle("Podglad Raportu");
 		
 
 		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 451, 515);
+		setBounds(100, 100, 451, 570);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -172,20 +177,41 @@ public class Notice_podglad extends JFrame {
 		Zalacznik_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				try {
-					Otworz_png(Kod_maszyny, Dzial);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				int pierwszy_znak = licz_znak_1(sciezka_1.getText());
+				String subst = sciezka_2.getText().substring(pierwszy_znak, sciezka_2.getText().length());
+				
+				// jesli jest to plik z rozszerzeniem filmowym, otworz film, jesli nie, to ELSE
+				if(subst.equals("mp3") || subst.equals("mp4")  || subst.equals("avi") || subst.equals("3gp"))
+				{
+					try {
+						Desktop.getDesktop().open(new File(sciezka_2.getText()));
+					} catch (IOException e) {
+				        JOptionPane.showMessageDialog(null, "Brak pliku o podanej sciezce" );
+						e.printStackTrace();
+					}
+				}
+				else
+				{
+				
+					try {
+						File file4 = new File(sciezka_1.getText());
+						File imageFile = new File(file4.getAbsolutePath());
+						BufferedImage image = ImageIO.read(imageFile);
+	
+						DisplayImage(image);
+					} catch (IOException e) {
+				        JOptionPane.showMessageDialog(null, "Brak pliku o podanej sciezce");
+						e.printStackTrace();
+					}
 				}
 			}
 		});
-		Zalacznik_1.setBounds(106, 381, 89, 23);
+		Zalacznik_1.setBounds(7, 381, 89, 23);
 		contentPane.add(Zalacznik_1);
 		
 		JButton btnNewButton_1 = new JButton("Zapisz");
 		btnNewButton_1.setEnabled(false);
-		btnNewButton_1.setBounds(336, 443, 89, 23);
+		btnNewButton_1.setBounds(336, 498, 89, 23);
 		contentPane.add(btnNewButton_1);
 		
 		JTextField txtTytul = new JTextField();
@@ -236,14 +262,14 @@ public class Notice_podglad extends JFrame {
 		txtSerwisant.setEditable(false);
 		txtSerwisant.setHorizontalAlignment(SwingConstants.CENTER);
 		txtSerwisant.setText("SERWISANT");
-		txtSerwisant.setBounds(10, 420, 86, 20);
+		txtSerwisant.setBounds(10, 462, 86, 20);
 		contentPane.add(txtSerwisant);
 		txtSerwisant.setColumns(10);
 		
 		textField_2 = new JTextField();
 		textField_2.setEditable(false);
 		textField_2.setHorizontalAlignment(SwingConstants.CENTER);
-		textField_2.setBounds(106, 420, 188, 20);
+		textField_2.setBounds(106, 462, 188, 20);
 		textField_2.setText(Serwisant);
 		
 		contentPane.add(textField_2);
@@ -262,17 +288,88 @@ public class Notice_podglad extends JFrame {
 		txtDataSerwisu.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		txtDataSerwisu.setEditable(false);
 		txtDataSerwisu.setText("DATA SERWISU");
-		txtDataSerwisu.setBounds(10, 444, 86, 20);
+		txtDataSerwisu.setBounds(10, 498, 86, 20);
 		contentPane.add(txtDataSerwisu);
 		txtDataSerwisu.setColumns(10);
 		
 		Data_serwisu = new JTextField();
 		Data_serwisu.setEditable(false);
 		Data_serwisu.setHorizontalAlignment(SwingConstants.CENTER);
-		Data_serwisu.setBounds(106, 444, 116, 20);
+		Data_serwisu.setBounds(106, 499, 116, 20);
 		Data_serwisu.setText(Data_serwisu1);
 		contentPane.add(Data_serwisu);
 		Data_serwisu.setColumns(10);
+		
+		JButton Zalacznik_2 = new JButton("Zalacznik 1");
+		Zalacznik_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				int pierwszy_znak = licz_znak_1(sciezka_2.getText());
+				String subst = sciezka_2.getText().substring(pierwszy_znak, sciezka_2.getText().length());
+				
+				// jesli jest to plik z rozszerzeniem filmowym, otworz film, jesli nie, to ELSE
+				if(subst.equals("mp3") || subst.equals("mp4")  || subst.equals("avi") || subst.equals("3gp"))
+				{
+					try {
+						Desktop.getDesktop().open(new File(sciezka_2.getText()));
+					} catch (IOException e) {
+				        JOptionPane.showMessageDialog(null, "Brak pliku o podanej sciezce");
+						e.printStackTrace();
+					}
+				}
+				else
+				{
+				
+					try {
+						File file4 = new File(sciezka_2.getText());
+						File imageFile = new File(file4.getAbsolutePath());
+						BufferedImage image = ImageIO.read(imageFile);
+	
+						DisplayImage(image);
+					} catch (IOException e) {
+				        JOptionPane.showMessageDialog(null, "Brak pliku o podanej sciezce");
+						e.printStackTrace();
+					}
+				}
+				
+			}
+		});
+		Zalacznik_2.setBounds(7, 415, 89, 23);
+		contentPane.add(Zalacznik_2);
+		
+		sciezka_1 = new JTextField();
+		sciezka_1.setEditable(false);
+		sciezka_1.setBounds(106, 382, 307, 20);
+		sciezka_1.setText(sciezka_do_zdj1);
+		contentPane.add(sciezka_1);
+		sciezka_1.setColumns(10);
+		
+		sciezka_2 = new JTextField();
+		sciezka_2.setEditable(false);
+		sciezka_2.setColumns(10);
+		sciezka_2.setBounds(109, 416, 304, 20);
+		sciezka_2.setText(sciezka_do_zdj2);
+		contentPane.add(sciezka_2);
 	
 	}
+	
+	
+	 private int licz_znak_1(String sciezka)
+	 {
+		 int l_znakow = sciezka.length();
+		 int licznik = 0;
+		 
+		 
+		 int i=0;
+		 for(i = l_znakow; i > 0; i--)
+		 {
+			 char a_char = sciezka.charAt(i-1);
+			 	if(a_char == '.')
+			 	{ 		
+			 		break;
+			 	}
+		 }
+		 return i;
+		 
+	 }
 }

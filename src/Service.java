@@ -121,7 +121,7 @@ public class Service extends JFrame {
 	public static void Refresh()
 	{
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
-		String data = "select  Data, Data_serwisu, Tytul, Powod, Co_Zrobiono, Kto  from serwisowane where Nr_Maszyny = '"+Nazwa_nazwa+"'";
+		String data = "select  Data, Data_serwisu, Tytul, Powod, Co_Zrobiono, Kto,Sciezka_1,Sciezka_2  from serwisowane where Nr_Maszyny = '"+Nazwa_nazwa+"'";
 		PreparedStatement pst;
 		try {
 			
@@ -371,9 +371,11 @@ public class Service extends JFrame {
 		            String Powod = Table.getValueAt(Table.getSelectedRow(), 3).toString();		  
 		            String Rozwiazanie = Table.getValueAt(Table.getSelectedRow(), 4).toString();
 		            String Serwisant = Table.getValueAt(Table.getSelectedRow(), 5).toString();
+		            String Sciezka1 = Table.getValueAt(Table.getSelectedRow(), 6).toString();
+		            String Sciezka2 = Table.getValueAt(Table.getSelectedRow(), 7).toString();
 
 
-		            Notice_podglad poglad = new Notice_podglad(Nazwa_maszyny.getText(),Data,Data_serwisu,Tytul,Powod,Rozwiazanie,Serwisant, Dzial.getText(),Nr_maszyny.getText());
+		            Notice_podglad poglad = new Notice_podglad(Nazwa_maszyny.getText(),Data,Data_serwisu,Tytul,Powod,Rozwiazanie,Serwisant, Dzial.getText(),Nr_maszyny.getText(),Sciezka1,Sciezka2);
 		            poglad.setVisible(true);
 	            
 	        	}	            

@@ -12,6 +12,8 @@ import javax.swing.filechooser.FileSystemView;
 
 import org.jfree.util.Log;
 
+import com.itextpdf.kernel.log.SystemOutCounter;
+
 import javax.swing.JTextField;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -113,7 +115,7 @@ public class Notice extends JFrame {
 		// ZAPISUJE WTEDY DO BAZY PUSTE POLA ( W MIEJSCU SCIEZEK)
 		
 		// dziala dobrze
-		if(sciezka.getText().equals("") || sciezka_2.getText().equals(""))
+		if(sciezka.getText().equals("Sciezka do zalacznika nr.1") && sciezka_2.getText().equals("Sciezka do zalacznika nr.2"))
 		{
 			System.out.println("obie sciezki sa puste");
 			
@@ -146,10 +148,14 @@ public class Notice extends JFrame {
 		}
 		// kiedy obie sciezki sa wypelnione, 
 		// czyli kiedy pojawiaja sie oba zalaczniki
-		else if(!sciezka.getText().equals("") && !sciezka_2.getText().equals(""))
+		// oraz kiedy nie sa to sciezki z pierwszego scenariusza
+		else if(!sciezka.getText().equals("") && !sciezka_2.getText().equals("") && !sciezka.getText().equals("Sciezka do zalacznika nr.1") && !sciezka_2.getText().equals("Sciezka do zalacznika nr.2"))
 		{
 			System.out.println("obie sciezki sa w uzyciu");
-			Nazwa_pliku_do_bazy = sciezka.getText();
+		//	Nazwa_pliku_do_bazy = sciezka.getText();
+			int pierwzy_znak = licz_znak_1(sciezka.getText());
+			Nazwa_pliku_do_bazy = sciezka.getText().substring(pierwzy_znak, sciezka.getText().length());
+
 			
 			
 			String query = "insert into serwisowane (Nr_Maszyny, Tytul,`Data`,Data_serwisu,Powod,Co_Zrobiono,Kto, Zdjecie,Sciezka_1,Sciezka_2) values (?,?,?,?,?,?,?,'',?,?)";
@@ -179,40 +185,88 @@ public class Notice extends JFrame {
 
 		}	
 		
+		// kiedy tylko DRUGA sciezka  jest zajeta, a pierwsza 'pusta'
+		// czyli kiedy tylko drugi zalacznik
+		else if(sciezka.getText().equals("Sciezka do zalacznika nr.1") && !sciezka_2.getText().equals("Sciezka do zalacznika nr.2"))
+		{
+			System.out.println("tylko druga sciezka w uzyciu");
+			//	Nazwa_pliku_do_bazy = sciezka.getText();
+				int pierwzy_znak = licz_znak_1(sciezka.getText());
+				Nazwa_pliku_do_bazy = sciezka.getText().substring(pierwzy_znak, sciezka.getText().length());
+
+				
+				
+				String query = "insert into serwisowane (Nr_Maszyny, Tytul,`Data`,Data_serwisu,Powod,Co_Zrobiono,Kto, Zdjecie,Sciezka_1,Sciezka_2) values (?,?,?,?,?,?,?,'','',?)";
+				
+				if(textField.getText().equals("Skrocony opis raportu") || editorPane_1.getText().equals("Co zostalo zrobione / zdiagnozowane") || editorPane.getText().equals("Powod serwisu") || Data_serwisu.getText().equals("2018-11-24")) {
+					String st = "Pola nie sa wypelnione";
+					JOptionPane.showMessageDialog(null, st);
+				}
+				else {
+				
+					pst=connection.prepareStatement(query);		
+					pst.setString(1, Nazwa_maszyny);
+					pst.setString(2, textField.getText());
+					pst.setString(3, Data_serwisu.getText());
+					pst.setString(4, GenerujCzas());
+					pst.setString(5, editorPane_1.getText());
+					pst.setString(6, editorPane.getText());
+					pst.setString(7, textField_2.getText());
+					//  TO NIE BEDZIE DZIALAC, ALE NA RAZIE TESTOWO
+					pst.setString(8, sciezka_2.getText());  // Sciezka_do_multimediow(Dzial,Nr_maszyny) <- to powinno byc zapisane ale brak dzial i nr maszyny
+					
+					ResultSet rs=pst.executeQuery();
+					pst.close();
+					rs.close();
+				}
+				option = 1;
+		}
+		
+		
+		// kiedy tylko pierwsza sciezka  jest zajeta, a DRUGA 'pusta'
+				// czyli kiedy tylko PIERWSZY zalacznik
+				else if(!sciezka.getText().equals("Sciezka do zalacznika nr.1") && sciezka_2.getText().equals("Sciezka do zalacznika nr.2"))
+				{
+					System.out.println("tylko pierwsza sciezka w uzyciu");
+					//	Nazwa_pliku_do_bazy = sciezka.getText();
+						int pierwzy_znak = licz_znak_1(sciezka.getText());
+						Nazwa_pliku_do_bazy = sciezka.getText().substring(pierwzy_znak, sciezka.getText().length());
+
+						
+						
+						String query = "insert into serwisowane (Nr_Maszyny, Tytul,`Data`,Data_serwisu,Powod,Co_Zrobiono,Kto, Zdjecie,Sciezka_1,Sciezka_2) values (?,?,?,?,?,?,?,'',?,'')";
+						
+						if(textField.getText().equals("Skrocony opis raportu") || editorPane_1.getText().equals("Co zostalo zrobione / zdiagnozowane") || editorPane.getText().equals("Powod serwisu") || Data_serwisu.getText().equals("2018-11-24")) {
+							String st = "Pola nie sa wypelnione";
+							JOptionPane.showMessageDialog(null, st);
+						}
+						else {
+						
+							pst=connection.prepareStatement(query);		
+							pst.setString(1, Nazwa_maszyny);
+							pst.setString(2, textField.getText());
+							pst.setString(3, Data_serwisu.getText());
+							pst.setString(4, GenerujCzas());
+							pst.setString(5, editorPane_1.getText());
+							pst.setString(6, editorPane.getText());
+							pst.setString(7, textField_2.getText());
+							//  TO NIE BEDZIE DZIALAC, ALE NA RAZIE TESTOWO
+							pst.setString(8, Sciezka_do_multimediow(Dzial,Nr_maszyny).toString());  // Sciezka_do_multimediow(Dzial,Nr_maszyny) <- to powinno byc zapisane ale brak dzial i nr maszyny
+							
+							ResultSet rs=pst.executeQuery();
+							pst.close();
+							rs.close();
+						}
+						option = 1;
+				}
+		
+		
 		else 
 		{
 			System.out.println("Jakis problem, sprawdz");
 		}
 
-//		
-//		if( option == 0 )
-//		{
-//			   String sql = "select Zdjecie from maszyna_1 where `Data` = '2018-11-16' and Tytul = 'Kotek' ";
-//			    PreparedStatement stmt = connection.prepareStatement(sql);
-//			    ResultSet resultSet = stmt.executeQuery();
-//			    while (resultSet.next())
-//			    {
-//			       image = new File("A:\\java.png");
-//			      FileOutputStream fos = new FileOutputStream(image);
-//
-//			      byte[] buffer = new byte[1];
-//			      InputStream is = resultSet.getBinaryStream(1);
-//				      while (is.read(buffer) > 0)
-//				      {
-//				    	  fos.write(buffer);
-//				      }
-//			      fos.close();
-//			    }
-//			    connection.close();
-//		}	
-//		
-//		File f = new File("A:\\java.png");
-//		Desktop d = Desktop.getDesktop();
-//				d.open(f);
-//		  	
-//		//Image ipcture = ImageIO.read(new File("A:\\java.png"));
-//		  System.out.println("Done.");
-//		 
+	 
 		
 		
 
@@ -283,7 +337,9 @@ public class Notice extends JFrame {
 					int pierwszy_znak = licz_znak_1(sciezka.getText());    // wyciaganie pierwszego '/' ze stringa ( w sensie ostaneigo)
 					Nazwa_pliku_do_bazy = sciezka.getText().substring(pierwszy_znak, sciezka.getText().length());
 					
-					copyFileUsingJava7Files(selectedFile,Sciezka_do_multimediow(Dzial,Nr_maszyny));
+					// PRZYPADEK TYLKO KIEDY JEST DLA 2 SCIEZEK
+					if(!sciezka.getText().equals("Sciezka do zalacznika nr.1") && !sciezka_2.getText().equals("Sciezka do zalacznika nr.2"))
+						copyFileUsingJava7Files(selectedFile,Sciezka_do_multimediow(Dzial,Nr_maszyny));
 
 					Update(Nazwa_maszyny,Dzial,Nr_maszyny);
 								
@@ -432,10 +488,29 @@ public class Notice extends JFrame {
 		contentPane.add(textField_1);
 		
 		sciezka = new JTextField();
+		sciezka.setText("Sciezka do zalacznika nr.1");
 		sciezka.setEditable(false);
 		sciezka.setBounds(109, 382, 313, 20);
 		contentPane.add(sciezka);
 		sciezka.setColumns(10);
+		
+		
+		sciezka.addFocusListener(new FocusListener() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        if (sciezka.getText().equals("Sciezka do zalacznika nr.1")) {
+		        	sciezka.setText("");
+		        	sciezka.setForeground(Color.BLACK);
+		        }
+		    }
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        if (sciezka.getText().isEmpty()) {
+		        	sciezka.setForeground(Color.GRAY);
+		        	sciezka.setText("Sciezka do zalacznika nr.1");
+		        }
+		    }
+		    });
 		
 		textField_3 = new JTextField();
 		textField_3.setHorizontalAlignment(SwingConstants.CENTER);
@@ -475,10 +550,28 @@ public class Notice extends JFrame {
 		contentPane.add(Zalacznik_2);
 		
 		sciezka_2 = new JTextField();
+		sciezka_2.setText("Sciezka do zalacznika nr.2");
 		sciezka_2.setEditable(false);
 		sciezka_2.setColumns(10);
 		sciezka_2.setBounds(109, 416, 315, 20);
 		contentPane.add(sciezka_2);
+		
+		sciezka_2.addFocusListener(new FocusListener() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        if (sciezka_2.getText().equals("Sciezka do zalacznika nr.2")) {
+		        	sciezka_2.setText("");
+		        	sciezka_2.setForeground(Color.BLACK);
+		        }
+		    }
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        if (sciezka_2.getText().isEmpty()) {
+		        	sciezka_2.setForeground(Color.GRAY);
+		        	sciezka_2.setText("Sciezka do zalacznika nr.2");
+		        }
+		    }
+		    });
 		
 		
 		Data_serwisu.addFocusListener(new FocusListener() {
@@ -507,14 +600,21 @@ public class Notice extends JFrame {
 		String Dzial_skrocone_drugie = Dzial.substring(3,Dzial.length());
 		
 		File file4 = new File(Parameters.getPathToMultimedia() + "/" + Dzial_skrocone_pierwsze + "/" + Dzial_skrocone_drugie + "/"+ Kod_maszyny + "/" + Nazwa_pliku_do_bazy );
+		System.out.println("n: "+ file4.getPath());
+
+		System.out.println("file4: "+ file4.getPath());
 		boolean exists4 = file4.exists();
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+		Date date = new Date();
+		String data = dateFormat.format(date); //2013/10/15 16:16:39
 		
 		if(!exists4)
 			System.out.println("FINALNY nie istnieje :"+ file4.getAbsolutePath());
 
 		else {
-			System.out.println("FINALNY istnieje" + file4.getAbsolutePath());
-			
+			System.out.println("FINALNY istnieje, plik zostanie zapisany z inna nazwa: " + file4.getAbsolutePath());
+			file4 = new File(Parameters.getPathToMultimedia() + "/" + Dzial_skrocone_pierwsze + "/" + Dzial_skrocone_drugie + "/"+ Kod_maszyny + "/"+ data +"-"+ Nazwa_pliku_do_bazy );
 			 return file4;
 		}
 

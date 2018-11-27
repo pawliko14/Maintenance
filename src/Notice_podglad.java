@@ -190,6 +190,18 @@ public class Notice_podglad extends JFrame {
 						e.printStackTrace();
 					}
 				}
+				else if(subst.equals("pdf"))
+				{
+					if (Desktop.isDesktopSupported()) {
+					    try {
+					        File myFile = new File(sciezka_2.getText());
+					        Desktop.getDesktop().open(myFile);
+					    } catch (IOException ex) {
+					        // no application registered for PDFs
+					    }
+					}
+				}
+				
 				else
 				{
 				
@@ -300,7 +312,7 @@ public class Notice_podglad extends JFrame {
 		contentPane.add(Data_serwisu);
 		Data_serwisu.setColumns(10);
 		
-		JButton Zalacznik_2 = new JButton("Zalacznik 1");
+		JButton Zalacznik_2 = new JButton("Zalacznik 2");
 		Zalacznik_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -317,6 +329,18 @@ public class Notice_podglad extends JFrame {
 						e.printStackTrace();
 					}
 				}
+				else if(subst.equals("pdf"))
+				{
+					if (Desktop.isDesktopSupported()) {
+					    try {
+					        File myFile = new File(sciezka_2.getText());
+					        Desktop.getDesktop().open(myFile);
+					    } catch (IOException ex) {
+					        // no application registered for PDFs
+					    }
+					}
+				}
+				
 				else
 				{
 				

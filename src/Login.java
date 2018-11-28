@@ -183,7 +183,7 @@ public class Login {
 				//	frame.dispose();
 					connection=MaintenanceConnection.dbConnector("tosia", "1234");
 					MachineChoice mojeMenu = new MachineChoice(connection);
-					mojeMenu.setBounds(100, 100, 620, 200);
+					mojeMenu.setBounds(100, 100, 630, 430);
 					mojeMenu.setVisible(true);
 					mojeMenu.FillComboBox1();
 					mojeMenu.FillComboBox3();

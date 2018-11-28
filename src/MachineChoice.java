@@ -14,6 +14,12 @@ import java.awt.Font;
 import java.awt.Image;
 
 import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
+
+import net.proteanit.sql.DbUtils;
+
 import javax.swing.JComboBox;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,6 +27,8 @@ import javax.swing.JLabel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 public class MachineChoice extends JFrame implements WindowListener  {
 
@@ -37,6 +45,11 @@ public class MachineChoice extends JFrame implements WindowListener  {
 	private JTextField textField;
 	private JTextField txtWyborSerwisanta;
 	private JTextField txtSerwisant;
+	private JTextField textField_1;
+	private JTextField txtWyszukiwaniePoFrazie;
+	private JTextField fraza;
+	private JScrollPane scrollPane;
+	private JTable table;
 
 	/**
 	 * Launch the application.
@@ -111,6 +124,9 @@ public class MachineChoice extends JFrame implements WindowListener  {
 	 * Create the application.
 	 */
 	public MachineChoice(Connection connection) {
+		
+		initialize();
+		
 		setResizable(false);
 		
 		this.setTitle("Wybor Maszyny");
@@ -252,7 +268,103 @@ public class MachineChoice extends JFrame implements WindowListener  {
 		});
 		OK_button1.setBounds(336, 80, 260, 23);
 		getContentPane().add(OK_button1);
-		initialize();
+		
+		textField_1 = new JTextField();
+		textField_1.setForeground(Color.DARK_GRAY);
+		textField_1.setEditable(false);
+		textField_1.setColumns(10);
+		textField_1.setBackground(Color.GRAY);
+		textField_1.setBounds(28, 169, 568, 10);
+		getContentPane().add(textField_1);
+		
+		txtWyszukiwaniePoFrazie = new JTextField();
+		txtWyszukiwaniePoFrazie.setText("WYSZUKIWANIE PO FRAZIE");
+		txtWyszukiwaniePoFrazie.setHorizontalAlignment(SwingConstants.CENTER);
+		txtWyszukiwaniePoFrazie.setFont(new Font("Tahoma", Font.BOLD, 14));
+		txtWyszukiwaniePoFrazie.setEditable(false);
+		txtWyszukiwaniePoFrazie.setColumns(10);
+		txtWyszukiwaniePoFrazie.setBounds(124, 190, 345, 20);
+		getContentPane().add(txtWyszukiwaniePoFrazie);
+		
+		fraza = new JTextField();
+		fraza.setBounds(148, 221, 207, 20);
+		getContentPane().add(fraza);
+		fraza.setColumns(10);
+		
+		JButton btnNewButton = new JButton("OK");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				pokaz_wyszukiwanie();
+				
+			}
+		});
+		btnNewButton.setBounds(365, 219, 89, 23);
+		getContentPane().add(btnNewButton);
+		
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 254, 603, 138);
+		getContentPane().add(scrollPane);
+		
+		table = new JTable();
+		table.setCellSelectionEnabled(true);
+		table.setColumnSelectionAllowed(true);
+		table.setFillsViewportHeight(true);
+
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent event) {
+				if (event.getValueIsAdjusting()) {
+					//String Data = "";
+					String Kod_maszyny = table.getValueAt(table.getSelectedRow(), 0).toString();
+					String Tytul = table.getValueAt(table.getSelectedRow(), 1).toString();
+					String Data1 = table.getValueAt(table.getSelectedRow(), 2).toString();	
+					String Powod = table.getValueAt(table.getSelectedRow(), 3).toString();
+					String Rozwiazanie = table.getValueAt(table.getSelectedRow(), 4).toString();
+					String Serwisant = table.getValueAt(table.getSelectedRow(), 5).toString();
+					String Sciezka_1 = table.getValueAt(table.getSelectedRow(), 6).toString();
+					String Sciezka_2 = table.getValueAt(table.getSelectedRow(), 7).toString();
+
+					Notice_podglad poglad = new Notice_podglad("Nazwa_maszyny", Data1, "Data_serwisu", Tytul, Powod,
+							Rozwiazanie, Serwisant, "Wydzial", Kod_maszyny,Sciezka_1,Sciezka_2);
+					poglad.setVisible(true);
+
+				}
+
+			}
+		});
+		
+		scrollPane.setViewportView(table);
+		
+	}
+	
+	private void pokaz_wyszukiwanie()
+	{
+		connection = MaintenanceConnection.dbConnector("tosia", "1234");
+		String data = "select Nr_Maszyny,Tytul,Data_serwisu,Powod,Co_Zrobiono,Kto,Sciezka_1,Sciezka_2 from serwisowane where (Powod like '"+fraza.getText()+"' or Co_Zrobiono like '%"+fraza.getText()+"%' or Tytul like '%"+fraza.getText()+"%' )";
+				
+		PreparedStatement pst;
+		try {
+
+			pst = connection.prepareStatement(data);
+			ResultSet rs = pst.executeQuery();
+			table.setModel(DbUtils.resultSetToTableModel(rs));
+	
+			pst.close();
+			rs.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		TableColumn column = null;
+		for (int i = 0; i < table.getColumnCount(); i++) {
+			column = table.getColumnModel().getColumn(i);
+			if (i == 1)
+				column.setPreferredWidth(170);
+			else
+				column.setPreferredWidth(20);
+
+		}
 	}
 
 	/**

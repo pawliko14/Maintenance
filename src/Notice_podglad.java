@@ -418,7 +418,8 @@ public class Notice_podglad extends JFrame {
 			JOptionPane.showMessageDialog(null, e);
 			
 		}
-
+		this.dispose();
+		Service.Refresh();
 	}
 	
 	

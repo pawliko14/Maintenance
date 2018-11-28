@@ -19,6 +19,10 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.awt.Color;
@@ -36,6 +40,8 @@ public class Notice_podglad extends JFrame {
 	private JTextField Data_serwisu;
 	private JTextField sciezka_1;
 	private JTextField sciezka_2;
+	Connection connection=null;
+
 
 	/**
 	 * Launch the application.
@@ -374,7 +380,45 @@ public class Notice_podglad extends JFrame {
 		sciezka_2.setBounds(109, 416, 304, 20);
 		sciezka_2.setText(sciezka_do_zdj2);
 		contentPane.add(sciezka_2);
+		
+		JButton usun_btn = new JButton("Usun");
+		usun_btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+					usun(Nazwa_maszyny, Data, Data_serwisu1,  Tytul,  Powod,  Rozwiazanie,  Serwisant,  Dzial, Kod_maszyny);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}  // usuniecie aktualnie podgladanej notakti
+			}
+		});
+		usun_btn.setFont(new Font("Tahoma", Font.BOLD, 13));
+		usun_btn.setBounds(336, 464, 89, 23);
+		contentPane.add(usun_btn);
 	
+	}
+	
+	private void usun(String Nazwa_maszyny,String Data,String Data_serwisu1, String Tytul, String Powod, String Rozwiazanie, String Serwisant, String Dzial,String Kod_maszyny ) throws SQLException
+	{
+		
+		System.out.println("dane: " +Nazwa_maszyny + Data + Data_serwisu1 + Tytul + Powod + Rozwiazanie + Serwisant + Dzial +"kod: "+ Kod_maszyny);
+		connection = MaintenanceConnection.dbConnector("tosia", "1234");
+		try {
+			String query = "delete from serwisowane where (Nr_maszyny = '"+Kod_maszyny+"' and Tytul = '"+Tytul+"' and `Data` = '"+Data+"' and Data_serwisu = '"+Data_serwisu1+"' and Powod = '"+Powod+"' and Co_Zrobiono = '"+Rozwiazanie+"' and Kto = '"+Serwisant+"')";
+			PreparedStatement pst=connection.prepareStatement(query);
+				pst.execute();
+				pst.close();
+				JOptionPane.showMessageDialog(null,"Usunieto notatke");
+				
+
+			}
+		catch (Exception e)
+		{
+			JOptionPane.showMessageDialog(null, e);
+			
+		}
+
 	}
 	
 	

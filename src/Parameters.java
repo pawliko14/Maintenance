@@ -1,11 +1,11 @@
 
 public class Parameters {
 	
+	//private static String PathToMultimedia = "A://Maintenance_test";
 	private static String PathToMultimedia = "A://Maintenance_test";
+	//private static String PathToMultimedia = "\\\\dataserver\\Common\\Utrzymanie_ruchu";
+
 	private static String PathToDatabase = "";
-	//private static String ModulatedPath = ""
-	
-	
 	
 	// getters setters
 	

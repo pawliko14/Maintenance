@@ -71,6 +71,7 @@ public class Notice extends JFrame {
 	private JTextField sciezka_2;
 	
 	private String Nazwa_pliku_do_bazy;
+	private String Nazwa_pliku_do_bazy2;
 
 
 	/**
@@ -106,7 +107,6 @@ public class Notice extends JFrame {
 	private void Update(String Nazwa_maszyny,String Dzial, String Nr_maszyny) throws SQLException, IOException
 	{
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
-		File image = null;
 		PreparedStatement pst = null;
 		int option = 0;
 		
@@ -156,7 +156,8 @@ public class Notice extends JFrame {
 			int pierwzy_znak = licz_znak_1(sciezka.getText());
 			Nazwa_pliku_do_bazy = sciezka.getText().substring(pierwzy_znak, sciezka.getText().length());
 
-			
+			Nazwa_pliku_do_bazy2 = sciezka_2.getText().substring(pierwzy_znak, sciezka_2.getText().length());
+
 			
 			String query = "insert into serwisowane (Nr_Maszyny, Tytul,`Data`,Data_serwisu,Powod,Co_Zrobiono,Kto, Zdjecie,Sciezka_1,Sciezka_2) values (?,?,?,?,?,?,?,'',?,?)";
 			
@@ -174,8 +175,8 @@ public class Notice extends JFrame {
 				pst.setString(5, editorPane_1.getText());
 				pst.setString(6, editorPane.getText());
 				pst.setString(7, textField_2.getText());
-				pst.setString(8, Sciezka_do_multimediow(Dzial,Nr_maszyny).toString());  // Sciezka_do_multimediow(Dzial,Nr_maszyny) <- to powinno byc zapisane ale brak dzial i nr maszyny
-				pst.setString(9, sciezka_2.getText());
+				pst.setString(8, Sciezka_do_multimediow(Dzial,Nr_maszyny,Nazwa_pliku_do_bazy,selectedFile).toString());  // Sciezka_do_multimediow(Dzial,Nr_maszyny) <- to powinno byc zapisane ale brak dzial i nr maszyny
+				pst.setString(9, Sciezka_do_multimediow(Dzial,Nr_maszyny,Nazwa_pliku_do_bazy2,selectedFile_2).toString());
 				
 				ResultSet rs=pst.executeQuery();
 				pst.close();
@@ -192,7 +193,7 @@ public class Notice extends JFrame {
 			System.out.println("tylko druga sciezka w uzyciu");
 			//	Nazwa_pliku_do_bazy = sciezka.getText();
 				int pierwzy_znak = licz_znak_1(sciezka.getText());
-				Nazwa_pliku_do_bazy = sciezka.getText().substring(pierwzy_znak, sciezka.getText().length());
+				Nazwa_pliku_do_bazy2 = sciezka.getText().substring(pierwzy_znak, sciezka_2.getText().length());
 
 				
 				
@@ -213,7 +214,7 @@ public class Notice extends JFrame {
 					pst.setString(6, editorPane.getText());
 					pst.setString(7, textField_2.getText());
 					//  TO NIE BEDZIE DZIALAC, ALE NA RAZIE TESTOWO
-					pst.setString(8, sciezka_2.getText());  // Sciezka_do_multimediow(Dzial,Nr_maszyny) <- to powinno byc zapisane ale brak dzial i nr maszyny
+					pst.setString(8, Sciezka_do_multimediow(Dzial,Nr_maszyny,Nazwa_pliku_do_bazy2,selectedFile_2).toString()); // Sciezka_do_multimediow(Dzial,Nr_maszyny) <- to powinno byc zapisane ale brak dzial i nr maszyny
 					
 					ResultSet rs=pst.executeQuery();
 					pst.close();
@@ -251,7 +252,7 @@ public class Notice extends JFrame {
 							pst.setString(6, editorPane.getText());
 							pst.setString(7, textField_2.getText());
 							//  TO NIE BEDZIE DZIALAC, ALE NA RAZIE TESTOWO
-							pst.setString(8, Sciezka_do_multimediow(Dzial,Nr_maszyny).toString());  // Sciezka_do_multimediow(Dzial,Nr_maszyny) <- to powinno byc zapisane ale brak dzial i nr maszyny
+							pst.setString(8, Sciezka_do_multimediow(Dzial,Nr_maszyny,Nazwa_pliku_do_bazy,selectedFile).toString());  // Sciezka_do_multimediow(Dzial,Nr_maszyny) <- to powinno byc zapisane ale brak dzial i nr maszyny
 							
 							ResultSet rs=pst.executeQuery();
 							pst.close();
@@ -259,17 +260,10 @@ public class Notice extends JFrame {
 						}
 						option = 1;
 				}
-		
-		
 		else 
 		{
 			System.out.println("Jakis problem, sprawdz");
-		}
-
-	 
-		
-		
-
+		}	
 	}
 	
 	
@@ -336,23 +330,20 @@ public class Notice extends JFrame {
 					
 					int pierwszy_znak = licz_znak_1(sciezka.getText());    // wyciaganie pierwszego '/' ze stringa ( w sensie ostaneigo)
 					Nazwa_pliku_do_bazy = sciezka.getText().substring(pierwszy_znak, sciezka.getText().length());
+					Nazwa_pliku_do_bazy2 = sciezka_2.getText().substring(pierwszy_znak, sciezka_2.getText().length());
 					
-					// PRZYPADEK TYLKO KIEDY JEST DLA 2 SCIEZEK
-					if(!sciezka.getText().equals("Sciezka do zalacznika nr.1") && !sciezka_2.getText().equals("Sciezka do zalacznika nr.2"))
-						copyFileUsingJava7Files(selectedFile,Sciezka_do_multimediow(Dzial,Nr_maszyny));
-
 					Update(Nazwa_maszyny,Dzial,Nr_maszyny);
 								
 					Notice.this.dispose();		
 					Service.Refresh();
-
-					
+					//Service.Fill();
+		
 					
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "niewykryty blad, dzwon do Konrada");
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "niewykryty blad, dzwon do Konrada");
 					e.printStackTrace();
 				}
 			}
@@ -528,6 +519,7 @@ public class Notice extends JFrame {
 		Data_serwisu.setBounds(111, 501, 113, 20);
 		contentPane.add(Data_serwisu);
 		
+		
 		JButton Zalacznik_2 = new JButton("Zalacznik 2");
 		Zalacznik_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -539,7 +531,6 @@ public class Notice extends JFrame {
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 					selectedFile_2 = jfc.getSelectedFile();
 					
-					System.out.println(selectedFile_2.getAbsolutePath());				
 					sciezka_2.setText(selectedFile_2.getAbsolutePath());				
 				}
 				
@@ -592,17 +583,14 @@ public class Notice extends JFrame {
 		    });
 	}
 	
-	private File Sciezka_do_multimediow(String Dzial, String Kod_maszyny)
+	private File Sciezka_do_multimediow(String Dzial, String Kod_maszyny, String nazwa_pliku, File selected) throws IOException
 	{
 		
 		System.out.println("istnieje+ nazwa maszyny:" + Dzial);
 		String Dzial_skrocone_pierwsze = Dzial.substring(0,2);  // wyciaga ze stringa tylko 2 pierwsze indexy
 		String Dzial_skrocone_drugie = Dzial.substring(3,Dzial.length());
 		
-		File file4 = new File(Parameters.getPathToMultimedia() + "/" + Dzial_skrocone_pierwsze + "/" + Dzial_skrocone_drugie + "/"+ Kod_maszyny + "/" + Nazwa_pliku_do_bazy );
-		System.out.println("n: "+ file4.getPath());
-
-		System.out.println("file4: "+ file4.getPath());
+		File file4 = new File(Parameters.getPathToMultimedia() + "/" + Dzial_skrocone_pierwsze + "/" + Dzial_skrocone_drugie + "/"+ Kod_maszyny + "/" + nazwa_pliku );
 		boolean exists4 = file4.exists();
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
@@ -614,25 +602,38 @@ public class Notice extends JFrame {
 
 		else {
 			System.out.println("FINALNY istnieje, plik zostanie zapisany z inna nazwa: " + file4.getAbsolutePath());
-			file4 = new File(Parameters.getPathToMultimedia() + "/" + Dzial_skrocone_pierwsze + "/" + Dzial_skrocone_drugie + "/"+ Kod_maszyny + "/"+ data +"-"+ Nazwa_pliku_do_bazy );
+			file4 = new File(Parameters.getPathToMultimedia() + "/" + Dzial_skrocone_pierwsze + "/" + Dzial_skrocone_drugie + "/"+ Kod_maszyny + "/"+ data +"-"+ nazwa_pliku );
+			copyFileUsingJava7Files(selected,file4);
 			 return file4;
 		}
 
+		System.out.println("sciezka: " + file4.getAbsolutePath());
+		copyFileUsingJava7Files(selected,file4);
+		
 		return file4;
 	}
 	
 
-	 private static void copyFileUsingJava7Files(File source, File dest) throws IOException {
+	 private static void copyFileUsingJava7Files(File source, File dest) throws IOException 
+	   {
+		 int pierwszy_znak = licz_znak_1(dest.toString());
+		 String dlugosc = dest.toString().substring(0, pierwszy_znak-1);
+		 
+		 File sciezka_bez_koncowki = new File(dlugosc);
+		 
+		 if(sciezka_bez_koncowki.exists())
 		    Files.copy(source.toPath(), dest.toPath());
+		 
+		 else {
+			 sciezka_bez_koncowki.mkdirs();
+			 Files.copy(source.toPath(), dest.toPath());
+		 }
+		 
 		}
 	 
-	 private int licz_znak_1(String sciezka)
+	 private static int licz_znak_1(String sciezka)
 	 {
-		 int l_znakow = sciezka.length();
-		 int licznik = 0;
-		 
-		 System.out.println("liczba znakow przed:"+ sciezka.length());
-		 
+		 int l_znakow = sciezka.length();		 
 		 int i=0;
 		 for(i = l_znakow; i > 0; i--)
 		 {

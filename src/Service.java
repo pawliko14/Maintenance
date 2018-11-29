@@ -41,8 +41,8 @@ public class Service extends JFrame {
 	private JTextField txtDzial;
 	private JTextField txtOstatniSerwis;
 	private JTextField txtSerwisant;
-	private JTextField Nr_Maszyny;
-	private JTextField Dzial;
+	private static JTextField Nr_Maszyny;
+	private static JTextField Dzial;
 	private JTextField Ostatni_serwis;
 	private JTextField Serwisant;
 	private JPanel Podstawowe_dane;
@@ -53,15 +53,15 @@ public class Service extends JFrame {
 	private JTextField historia_zycia;
 	private static JTable Table;
 	
-	private JLabel Nazwa_maszyny;
+	private static JLabel Nazwa_maszyny;
 	
 	private static String Dzial_nazwa = "";
 	private static String Nazwa_nazwa = "";
 	
 	static Connection connection=null;
 	private JScrollPane scrollPane;
-	private JTextField Nr_maszyny;
-	private JTextField Aktywnosc;
+	private static JTextField Nr_maszyny;
+	private static JTextField Aktywnosc;
 	private JLabel lblNewLabel;
 
 
@@ -81,7 +81,7 @@ public class Service extends JFrame {
 		});
 	}
 	
-	private void Fill() throws SQLException 
+	public static void Fill() throws SQLException 
 	{
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
 		
@@ -99,7 +99,7 @@ public class Service extends JFrame {
 		}
 	}
 	
-	private void FillRest() throws SQLException
+	public void FillRest() throws SQLException
 	{
 		
 		System.out.println("Maszyna: "+ Nazwa_nazwa);
@@ -192,7 +192,7 @@ public class Service extends JFrame {
 		Image img = new ImageIcon(this.getClass().getResource("tool_white.png")).getImage();
 		
 		Nazwa_maszyny = new JLabel("NAZWA MASZYNY");
-		Nazwa_maszyny.setBounds(109, -2, 334, 20);
+		Nazwa_maszyny.setBounds(109, -1, 334, 20);
 		panel.add(Nazwa_maszyny);
 		Nazwa_maszyny.setForeground(Color.LIGHT_GRAY);
 		Nazwa_maszyny.setFont(new Font("Tahoma", Font.BOLD, 14));

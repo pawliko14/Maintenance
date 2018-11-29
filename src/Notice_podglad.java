@@ -184,26 +184,36 @@ public class Notice_podglad extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				int pierwszy_znak = licz_znak_1(sciezka_1.getText());
-				String subst = sciezka_2.getText().substring(pierwszy_znak, sciezka_2.getText().length());
+				String subst = sciezka_1.getText().substring(pierwszy_znak, sciezka_1.getText().length());
 				
 				// jesli jest to plik z rozszerzeniem filmowym, otworz film, jesli nie, to ELSE
 				if(subst.equals("mp3") || subst.equals("mp4")  || subst.equals("avi") || subst.equals("3gp"))
 				{
 					try {
-						Desktop.getDesktop().open(new File(sciezka_2.getText()));
+						File f =new File(sciezka_1.getText());
+						if(f.exists())
+							Desktop.getDesktop().open(f);
+						else 
+						    JOptionPane.showMessageDialog(null, "Nieprawidlowa sciezka, lub brak pliku");
+
 					} catch (IOException e) {
 				        JOptionPane.showMessageDialog(null, "Brak pliku o podanej sciezce" );
 						e.printStackTrace();
 					}
 				}
-				else if(subst.equals("pdf"))
+				else if(subst.equals("pdf") || subst.equals("txt"))
 				{
+					
 					if (Desktop.isDesktopSupported()) {
 					    try {
-					        File myFile = new File(sciezka_2.getText());
-					        Desktop.getDesktop().open(myFile);
+					        File myFile = new File(sciezka_1.getText());
+					        if(myFile.exists())
+					        	Desktop.getDesktop().open(myFile);
+					        else
+							    JOptionPane.showMessageDialog(null, "Nieprawidlowa sciezka, lub brak pliku");
+
 					    } catch (IOException ex) {
-					        // no application registered for PDFs
+					        JOptionPane.showMessageDialog(null, "Brak pliku o podanej sciezce" );
 					    }
 					}
 				}
@@ -212,11 +222,21 @@ public class Notice_podglad extends JFrame {
 				{
 				
 					try {
-						File file4 = new File(sciezka_1.getText());
-						File imageFile = new File(file4.getAbsolutePath());
-						BufferedImage image = ImageIO.read(imageFile);
-	
-						DisplayImage(image);
+						if(sciezka_1.getText().equals(""))
+						{
+					        JOptionPane.showMessageDialog(null, "Brak pliku o podanej sciezce");
+						}
+						else {
+							File file4 = new File(sciezka_1.getText());
+							if(file4.exists()) {
+								File imageFile = new File(file4.getAbsolutePath());
+								BufferedImage image = ImageIO.read(imageFile);
+								DisplayImage(image);
+							}
+							else
+							    JOptionPane.showMessageDialog(null, "Nieprawidlowa sciezka, lub brak pliku");
+
+						}
 					} catch (IOException e) {
 				        JOptionPane.showMessageDialog(null, "Brak pliku o podanej sciezce");
 						e.printStackTrace();
@@ -329,20 +349,29 @@ public class Notice_podglad extends JFrame {
 				if(subst.equals("mp3") || subst.equals("mp4")  || subst.equals("avi") || subst.equals("3gp"))
 				{
 					try {
-						Desktop.getDesktop().open(new File(sciezka_2.getText()));
+						File f = new File(sciezka_2.getText());
+							if(f.exists())
+						Desktop.getDesktop().open(f);
+							else
+						       JOptionPane.showMessageDialog(null, "Nieprawidlowa sciezka, lub brak pliku");
+			
 					} catch (IOException e) {
 				        JOptionPane.showMessageDialog(null, "Brak pliku o podanej sciezce");
 						e.printStackTrace();
 					}
 				}
-				else if(subst.equals("pdf"))
+				else if(subst.equals("pdf") || subst.equals("txt"))
 				{
 					if (Desktop.isDesktopSupported()) {
 					    try {
 					        File myFile = new File(sciezka_2.getText());
-					        Desktop.getDesktop().open(myFile);
+					        if(myFile.exists())
+					        	Desktop.getDesktop().open(myFile);
+					        else
+							    JOptionPane.showMessageDialog(null, "Nieprawidlowa sciezka, lub brak pliku");
+
 					    } catch (IOException ex) {
-					        // no application registered for PDFs
+					        JOptionPane.showMessageDialog(null, "Brak pliku o podanej sciezce");
 					    }
 					}
 				}
@@ -351,11 +380,22 @@ public class Notice_podglad extends JFrame {
 				{
 				
 					try {
-						File file4 = new File(sciezka_2.getText());
-						File imageFile = new File(file4.getAbsolutePath());
-						BufferedImage image = ImageIO.read(imageFile);
-	
-						DisplayImage(image);
+						if(sciezka_2.getText().equals(""))
+						{
+					        JOptionPane.showMessageDialog(null, "Brak pliku o podanej sciezce");
+						}
+						else {
+							File file4 = new File(sciezka_2.getText());
+							if(file4.exists())
+							{
+								File imageFile = new File(file4.getAbsolutePath());
+								BufferedImage image = ImageIO.read(imageFile);
+								DisplayImage(image);
+							}
+							else
+							    JOptionPane.showMessageDialog(null, "Nieprawidlowa sciezka, lub brak pliku");
+
+						}
 					} catch (IOException e) {
 				        JOptionPane.showMessageDialog(null, "Brak pliku o podanej sciezce");
 						e.printStackTrace();
@@ -426,9 +466,7 @@ public class Notice_podglad extends JFrame {
 	 private int licz_znak_1(String sciezka)
 	 {
 		 int l_znakow = sciezka.length();
-		 int licznik = 0;
-		 
-		 
+		 	 
 		 int i=0;
 		 for(i = l_znakow; i > 0; i--)
 		 {
@@ -438,7 +476,6 @@ public class Notice_podglad extends JFrame {
 			 		break;
 			 	}
 		 }
-		 return i;
-		 
+		 return i;	 
 	 }
 }

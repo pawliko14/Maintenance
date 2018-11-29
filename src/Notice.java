@@ -155,7 +155,6 @@ public class Notice extends JFrame {
 		//	Nazwa_pliku_do_bazy = sciezka.getText();
 			int pierwzy_znak = licz_znak_1(sciezka.getText());
 			Nazwa_pliku_do_bazy = sciezka.getText().substring(pierwzy_znak, sciezka.getText().length());
-
 			Nazwa_pliku_do_bazy2 = sciezka_2.getText().substring(pierwzy_znak, sciezka_2.getText().length());
 
 			
@@ -192,8 +191,8 @@ public class Notice extends JFrame {
 		{
 			System.out.println("tylko druga sciezka w uzyciu");
 			//	Nazwa_pliku_do_bazy = sciezka.getText();
-				int pierwzy_znak = licz_znak_1(sciezka.getText());
-				Nazwa_pliku_do_bazy2 = sciezka.getText().substring(pierwzy_znak, sciezka_2.getText().length());
+				int pierwzy_znak = licz_znak_1(sciezka_2.getText());
+				Nazwa_pliku_do_bazy2 = sciezka_2.getText().substring(pierwzy_znak, sciezka_2.getText().length());
 
 				
 				
@@ -213,9 +212,9 @@ public class Notice extends JFrame {
 					pst.setString(5, editorPane_1.getText());
 					pst.setString(6, editorPane.getText());
 					pst.setString(7, textField_2.getText());
-					//  TO NIE BEDZIE DZIALAC, ALE NA RAZIE TESTOWO
-					pst.setString(8, Sciezka_do_multimediow(Dzial,Nr_maszyny,Nazwa_pliku_do_bazy2,selectedFile_2).toString()); // Sciezka_do_multimediow(Dzial,Nr_maszyny) <- to powinno byc zapisane ale brak dzial i nr maszyny
+					pst.setString(8, Sciezka_do_multimediow(Dzial,Nr_maszyny,Nazwa_pliku_do_bazy2,selectedFile_2).toString());  // Sciezka_do_multimediow(Dzial,Nr_maszyny) <- to powinno byc zapisane ale brak dzial i nr maszyny
 					
+
 					ResultSet rs=pst.executeQuery();
 					pst.close();
 					rs.close();
@@ -254,6 +253,7 @@ public class Notice extends JFrame {
 							//  TO NIE BEDZIE DZIALAC, ALE NA RAZIE TESTOWO
 							pst.setString(8, Sciezka_do_multimediow(Dzial,Nr_maszyny,Nazwa_pliku_do_bazy,selectedFile).toString());  // Sciezka_do_multimediow(Dzial,Nr_maszyny) <- to powinno byc zapisane ale brak dzial i nr maszyny
 							
+
 							ResultSet rs=pst.executeQuery();
 							pst.close();
 							rs.close();

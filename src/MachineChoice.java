@@ -24,6 +24,8 @@ import javax.swing.JComboBox;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
@@ -295,7 +297,13 @@ public class MachineChoice extends JFrame implements WindowListener  {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				pokaz_wyszukiwanie();
+				try {
+					pokaz_wyszukiwanie();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+			        JOptionPane.showMessageDialog(null, "Odswiez aplikacje" );
+				}
 				
 			}
 		});
@@ -337,20 +345,20 @@ public class MachineChoice extends JFrame implements WindowListener  {
 		
 	}
 	
-	private void pokaz_wyszukiwanie()
+	private void pokaz_wyszukiwanie() throws SQLException
 	{
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
-		String data = "select Nr_Maszyny,Tytul,Data_serwisu,Powod,Co_Zrobiono,Kto,Sciezka_1,Sciezka_2 from serwisowane where (Powod like '"+fraza.getText()+"' or Co_Zrobiono like '%"+fraza.getText()+"%' or Tytul like '%"+fraza.getText()+"%' )";
+		String sql = "select Nr_Maszyny,Tytul,Data_serwisu,Powod,Co_Zrobiono,Kto,Sciezka_1,Sciezka_2 from serwisowane where (Powod like '"+fraza.getText()+"' or Co_Zrobiono like '%"+fraza.getText()+"%' or Tytul like '%"+fraza.getText()+"%' ) order by Nr_Maszyny";
 				
-		PreparedStatement pst;
+		PreparedStatement pst=null;
+		ResultSet rs = null;
 		try {
 
-			pst = connection.prepareStatement(data);
-			ResultSet rs = pst.executeQuery();
+			pst = connection.prepareStatement(sql);
+			rs = pst.executeQuery();
 			table.setModel(DbUtils.resultSetToTableModel(rs));
 	
-			pst.close();
-			rs.close();
+			
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -365,6 +373,8 @@ public class MachineChoice extends JFrame implements WindowListener  {
 				column.setPreferredWidth(20);
 
 		}
+		pst.close();
+		rs.close();
 	}
 
 	/**

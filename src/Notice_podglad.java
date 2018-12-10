@@ -50,7 +50,7 @@ public class Notice_podglad extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Notice_podglad frame = new Notice_podglad("","","","","","","","","","","");
+					Notice_podglad frame = new Notice_podglad("","","","","","","","","","","","");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -142,7 +142,7 @@ public class Notice_podglad extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Notice_podglad(String Nazwa_maszyny,String Data,String Data_serwisu1, String Tytul, String Powod, String Rozwiazanie, String Serwisant, String Dzial,String Kod_maszyny,String sciezka_do_zdj1, String sciezka_do_zdj2) {
+	public Notice_podglad(String Nazwa_maszyny,String Data,String Data_serwisu1, String Tytul, String Powod, String Rozwiazanie, String Serwisant, String Dzial,String Kod_maszyny,String sciezka_do_zdj1, String sciezka_do_zdj2, String id) {
 
 		this.setTitle("Podglad Raportu");
 		
@@ -180,6 +180,7 @@ public class Notice_podglad extends JFrame {
 		txtMaszynka.setColumns(10);
 		
 		JButton Zalacznik_1 = new JButton("Zalacznik 1");
+		Zalacznik_1.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		Zalacznik_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -339,6 +340,7 @@ public class Notice_podglad extends JFrame {
 		Data_serwisu.setColumns(10);
 		
 		JButton Zalacznik_2 = new JButton("Zalacznik 2");
+		Zalacznik_2.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		Zalacznik_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -426,7 +428,14 @@ public class Notice_podglad extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				try {
-					usun(Nazwa_maszyny, Data, Data_serwisu1,  Tytul,  Powod,  Rozwiazanie,  Serwisant,  Dzial, Kod_maszyny);
+					// niestety nie zrobilem usuniecia po ID ( moze to skutkowac (maloprawdopodobne) ze usunie sie nie 
+					// ta notatke co trzeba - mozna dodac w przyszlosci (duzo niepotrzebnej pracy)
+					int reply = JOptionPane.showConfirmDialog(null, "Usunac notatke?", "Usunac?",  JOptionPane.YES_NO_OPTION);
+					if (reply == JOptionPane.YES_OPTION)
+					{
+						usun(id);
+					}
+					
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -439,13 +448,12 @@ public class Notice_podglad extends JFrame {
 	
 	}
 	
-	private void usun(String Nazwa_maszyny,String Data,String Data_serwisu1, String Tytul, String Powod, String Rozwiazanie, String Serwisant, String Dzial,String Kod_maszyny ) throws SQLException
+	private void usun(String ID ) throws SQLException
 	{
 		
-		System.out.println("dane: " +Nazwa_maszyny + Data + Data_serwisu1 + Tytul + Powod + Rozwiazanie + Serwisant + Dzial +"kod: "+ Kod_maszyny);
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
 		try {
-			String query = "delete from serwisowane where (Nr_maszyny = '"+Kod_maszyny+"' and Tytul = '"+Tytul+"' and `Data` = '"+Data+"' and Data_serwisu = '"+Data_serwisu1+"' and Powod = '"+Powod+"' and Co_Zrobiono = '"+Rozwiazanie+"' and Kto = '"+Serwisant+"')";
+			String query = "delete from serwisowane where ID = '"+ID+"'";
 			PreparedStatement pst=connection.prepareStatement(query);
 				pst.execute();
 				pst.close();

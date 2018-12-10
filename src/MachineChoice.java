@@ -183,6 +183,7 @@ public class MachineChoice extends JFrame implements WindowListener  {
 		OK_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				//odpalenie obiektu z danymi na temat danej maszyny z danego dzialu
 				Service Service;
 				try {
 					Service = new Service(comboBox_Dzial.getSelectedItem().toString(), comboBox_Nazwa.getSelectedItem().toString());
@@ -220,12 +221,8 @@ public class MachineChoice extends JFrame implements WindowListener  {
 		JButton ok_nazwa = new JButton("OK");
 		ok_nazwa.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		ok_nazwa.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {		
 				OK_button.setEnabled(true);
-				
-			//	Image img = new ImageIcon(this.getClass().getResource("haco_machine_1.png")).getImage();
-		//		Machine_photo.setIcon(new ImageIcon(img));
-
 			}
 		});
 		ok_nazwa.setBounds(235, 82, 55, 23);
@@ -323,17 +320,18 @@ public class MachineChoice extends JFrame implements WindowListener  {
 			public void valueChanged(ListSelectionEvent event) {
 				if (event.getValueIsAdjusting()) {
 					//String Data = "";
-					String Kod_maszyny = table.getValueAt(table.getSelectedRow(), 0).toString();
-					String Tytul = table.getValueAt(table.getSelectedRow(), 1).toString();
-					String Data1 = table.getValueAt(table.getSelectedRow(), 2).toString();	
-					String Powod = table.getValueAt(table.getSelectedRow(), 3).toString();
-					String Rozwiazanie = table.getValueAt(table.getSelectedRow(), 4).toString();
-					String Serwisant = table.getValueAt(table.getSelectedRow(), 5).toString();
-					String Sciezka_1 = table.getValueAt(table.getSelectedRow(), 6).toString();
-					String Sciezka_2 = table.getValueAt(table.getSelectedRow(), 7).toString();
+					String ID = table.getValueAt(table.getSelectedRow(), 0).toString();
+					String Kod_maszyny = table.getValueAt(table.getSelectedRow(), 1).toString();
+					String Tytul = table.getValueAt(table.getSelectedRow(), 2).toString();
+					String Data1 = table.getValueAt(table.getSelectedRow(), 3).toString();	
+					String Powod = table.getValueAt(table.getSelectedRow(), 4).toString();
+					String Rozwiazanie = table.getValueAt(table.getSelectedRow(), 5).toString();
+					String Serwisant = table.getValueAt(table.getSelectedRow(), 6).toString();
+					String Sciezka_1 = table.getValueAt(table.getSelectedRow(), 7).toString();
+					String Sciezka_2 = table.getValueAt(table.getSelectedRow(), 8).toString();
 
-					Notice_podglad poglad = new Notice_podglad("Nazwa_maszyny", Data1, "Data_serwisu", Tytul, Powod,
-							Rozwiazanie, Serwisant, "Wydzial", Kod_maszyny,Sciezka_1,Sciezka_2);
+					Notice_podglad poglad = new Notice_podglad(Kod_maszyny, "", Data1, Tytul, Powod,
+							Rozwiazanie, Serwisant, "Wydzial", Kod_maszyny,Sciezka_1,Sciezka_2, ID);
 					poglad.setVisible(true);
 
 				}
@@ -348,7 +346,7 @@ public class MachineChoice extends JFrame implements WindowListener  {
 	private void pokaz_wyszukiwanie() throws SQLException
 	{
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
-		String sql = "select Nr_Maszyny,Tytul,Data_serwisu,Powod,Co_Zrobiono,Kto,Sciezka_1,Sciezka_2 from serwisowane where (Powod like '"+fraza.getText()+"' or Co_Zrobiono like '%"+fraza.getText()+"%' or Tytul like '%"+fraza.getText()+"%' ) order by Nr_Maszyny";
+		String sql = "select ID,Nr_Maszyny,Tytul,Data_serwisu,Powod,Co_Zrobiono,Kto,Sciezka_1,Sciezka_2 from serwisowane where (Powod like '"+fraza.getText()+"' or Co_Zrobiono like '%"+fraza.getText()+"%' or Tytul like '%"+fraza.getText()+"%' ) order by Nr_Maszyny";
 				
 		PreparedStatement pst=null;
 		ResultSet rs = null;
@@ -358,8 +356,6 @@ public class MachineChoice extends JFrame implements WindowListener  {
 			rs = pst.executeQuery();
 			table.setModel(DbUtils.resultSetToTableModel(rs));
 	
-			
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

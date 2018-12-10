@@ -10,9 +10,9 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileSystemView;
 
-import org.jfree.util.Log;
+///import org.jfree.util.Log;
 
-import com.itextpdf.kernel.log.SystemOutCounter;
+//import com.itextpdf.kernel.log.SystemOutCounter;
 
 import javax.swing.JTextField;
 import javax.imageio.ImageIO;
@@ -108,7 +108,6 @@ public class Notice extends JFrame {
 	{
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
 		PreparedStatement pst = null;
-		int option = 0;
 		
 		
 		// PIERWSZA MOZLIWOSC, KIEDY  OBIE SCIEZKI SA PUSTE, - PLKIKI NIE ZOSTALY WYBRANE
@@ -120,31 +119,22 @@ public class Notice extends JFrame {
 			System.out.println("obie sciezki sa puste");
 			
 			String query = "insert into serwisowane (Nr_Maszyny, Tytul,`Data`,Data_serwisu,Powod,Co_Zrobiono,Kto, Zdjecie,Sciezka_1,Sciezka_2) values (?,?,?,?,?,?,?,'',?,?)";
-			
-			if(textField.getText().equals("Skrocony opis raportu") || editorPane_1.getText().equals("Co zostalo zrobione / zdiagnozowane") || editorPane.getText().equals("Powod serwisu") || Data_serwisu.getText().equals("2018-11-24")) {
-				String st = "Pola nie sa wypelnione";
-				JOptionPane.showMessageDialog(null, st);
-			}
-			else {
 				pst=connection.prepareStatement(query);		
 				
 				pst.setString(1, Nazwa_maszyny);
 				pst.setString(2, textField.getText());
-				pst.setString(3, Data_serwisu.getText());
-				pst.setString(4, GenerujCzas());
+				pst.setString(3, GenerujCzas());
+				pst.setString(4, Data_serwisu.getText()); // automatycznie wygenerowany czas
 				pst.setString(5, editorPane_1.getText());
 				pst.setString(6, editorPane.getText());
 				pst.setString(7, textField_2.getText());
 				pst.setString(8, "");
 				pst.setString(9, "");
-
-				
+		
 				ResultSet rs=pst.executeQuery();
 				pst.close();
 				rs.close();
-			}
-			
-		
+				
 		}
 		// kiedy obie sciezki sa wypelnione, 
 		// czyli kiedy pojawiaja sie oba zalaczniki
@@ -156,16 +146,9 @@ public class Notice extends JFrame {
 			int pierwzy_znak = licz_znak_1(sciezka.getText());
 			Nazwa_pliku_do_bazy = sciezka.getText().substring(pierwzy_znak, sciezka.getText().length());
 			Nazwa_pliku_do_bazy2 = sciezka_2.getText().substring(pierwzy_znak, sciezka_2.getText().length());
-
-			
+		
 			String query = "insert into serwisowane (Nr_Maszyny, Tytul,`Data`,Data_serwisu,Powod,Co_Zrobiono,Kto, Zdjecie,Sciezka_1,Sciezka_2) values (?,?,?,?,?,?,?,'',?,?)";
-			
-			if(textField.getText().equals("Skrocony opis raportu") || editorPane_1.getText().equals("Co zostalo zrobione / zdiagnozowane") || editorPane.getText().equals("Powod serwisu") || Data_serwisu.getText().equals("2018-11-24")) {
-				String st = "Pola nie sa wypelnione";
-				JOptionPane.showMessageDialog(null, st);
-			}
-			else {
-			
+					
 				pst=connection.prepareStatement(query);		
 				pst.setString(1, Nazwa_maszyny);
 				pst.setString(2, textField.getText());
@@ -180,9 +163,6 @@ public class Notice extends JFrame {
 				ResultSet rs=pst.executeQuery();
 				pst.close();
 				rs.close();
-			}
-			option = 1;
-
 		}	
 		
 		// kiedy tylko DRUGA sciezka  jest zajeta, a pierwsza 'pusta'
@@ -193,16 +173,9 @@ public class Notice extends JFrame {
 			//	Nazwa_pliku_do_bazy = sciezka.getText();
 				int pierwzy_znak = licz_znak_1(sciezka_2.getText());
 				Nazwa_pliku_do_bazy2 = sciezka_2.getText().substring(pierwzy_znak, sciezka_2.getText().length());
-
-				
-				
+	
 				String query = "insert into serwisowane (Nr_Maszyny, Tytul,`Data`,Data_serwisu,Powod,Co_Zrobiono,Kto, Zdjecie,Sciezka_1,Sciezka_2) values (?,?,?,?,?,?,?,'','',?)";
 				
-				if(textField.getText().equals("Skrocony opis raportu") || editorPane_1.getText().equals("Co zostalo zrobione / zdiagnozowane") || editorPane.getText().equals("Powod serwisu") || Data_serwisu.getText().equals("2018-11-24")) {
-					String st = "Pola nie sa wypelnione";
-					JOptionPane.showMessageDialog(null, st);
-				}
-				else {
 				
 					pst=connection.prepareStatement(query);		
 					pst.setString(1, Nazwa_maszyny);
@@ -218,8 +191,7 @@ public class Notice extends JFrame {
 					ResultSet rs=pst.executeQuery();
 					pst.close();
 					rs.close();
-				}
-				option = 1;
+				
 		}
 		
 		
@@ -232,16 +204,8 @@ public class Notice extends JFrame {
 						int pierwzy_znak = licz_znak_1(sciezka.getText());
 						Nazwa_pliku_do_bazy = sciezka.getText().substring(pierwzy_znak, sciezka.getText().length());
 
-						
-						
 						String query = "insert into serwisowane (Nr_Maszyny, Tytul,`Data`,Data_serwisu,Powod,Co_Zrobiono,Kto, Zdjecie,Sciezka_1,Sciezka_2) values (?,?,?,?,?,?,?,'',?,'')";
-						
-						if(textField.getText().equals("Skrocony opis raportu") || editorPane_1.getText().equals("Co zostalo zrobione / zdiagnozowane") || editorPane.getText().equals("Powod serwisu") || Data_serwisu.getText().equals("2018-11-24")) {
-							String st = "Pola nie sa wypelnione";
-							JOptionPane.showMessageDialog(null, st);
-						}
-						else {
-						
+					
 							pst=connection.prepareStatement(query);		
 							pst.setString(1, Nazwa_maszyny);
 							pst.setString(2, textField.getText());
@@ -257,8 +221,6 @@ public class Notice extends JFrame {
 							ResultSet rs=pst.executeQuery();
 							pst.close();
 							rs.close();
-						}
-						option = 1;
 				}
 		else 
 		{
@@ -296,12 +258,14 @@ public class Notice extends JFrame {
 		
 		txtMaszynka = new JTextField();
 		txtMaszynka.setEditable(false);
+		txtMaszynka.setText(Nr_maszyny);
 		txtMaszynka.setHorizontalAlignment(SwingConstants.CENTER);
 		txtMaszynka.setBounds(37, 11, 249, 20);
 		contentPane.add(txtMaszynka);
 		txtMaszynka.setColumns(10);
 		
 		JButton Zalacznik_1 = new JButton("Zalacznik 1");
+		Zalacznik_1.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		Zalacznik_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -325,16 +289,23 @@ public class Notice extends JFrame {
 		Zapisz.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				System.out.println("utworzono nowy rekord");
 				try {
 					
 					int pierwszy_znak = licz_znak_1(sciezka.getText());    // wyciaganie pierwszego '/' ze stringa ( w sensie ostaneigo)
 					Nazwa_pliku_do_bazy = sciezka.getText().substring(pierwszy_znak, sciezka.getText().length());
 					Nazwa_pliku_do_bazy2 = sciezka_2.getText().substring(pierwszy_znak, sciezka_2.getText().length());
 					
-					Update(Nazwa_maszyny,Dzial,Nr_maszyny);
-								
-					Notice.this.dispose();		
+					if(textField.getText().equals("Skrocony opis raportu") || editorPane_1.getText().equals("Co zostalo zrobione / zdiagnozowane") || editorPane.getText().equals("Powod serwisu") || Data_serwisu.getText().equals("2018-11-24")) {
+						String st = "Pola nie sa wypelnione";
+						JOptionPane.showMessageDialog(null, st);
+					}
+					else
+					{
+						Update(Nazwa_maszyny,Dzial,Nr_maszyny);
+						Notice.this.dispose();		
+						System.out.println("utworzono nowy rekord");
+
+					}	
 					Service.Refresh();
 					//Service.Fill();
 		
@@ -521,6 +492,7 @@ public class Notice extends JFrame {
 		
 		
 		JButton Zalacznik_2 = new JButton("Zalacznik 2");
+		Zalacznik_2.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		Zalacznik_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				

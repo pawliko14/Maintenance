@@ -6,9 +6,7 @@ public class Parameters {
 	private static String PathToMultimedia = "\\\\dataserver\\Common\\Utrzymanie_ruchu";
 
 	private static String PathToDatabase = "";
-	
-	// getters setters
-	
+		
 	public static String getPathToMultimedia() {
 		return PathToMultimedia;
 	}

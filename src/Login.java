@@ -176,11 +176,10 @@ public class Login {
 			}
 			if(count==1)
 			{
-				
+				// polaczenie sie na poswiadczeniach Tosi - najprosciej
 					rs.close();
 					pst.close();
 					frame.setVisible(false);
-				//	frame.dispose();
 					connection=MaintenanceConnection.dbConnector("tosia", "1234");
 					MachineChoice mojeMenu = new MachineChoice(connection);
 					mojeMenu.setBounds(100, 100, 630, 430);

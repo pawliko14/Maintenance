@@ -72,7 +72,7 @@ public class Service extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Service frame = new Service(Dzial_nazwa, Nazwa_nazwa);
+					Service frame = new Service(Dzial_nazwa, Nazwa_nazwa); // defaultowe wartosci "" oraz "" przy odpaleniu
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -121,7 +121,7 @@ public class Service extends JFrame {
 	public static void Refresh()
 	{
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
-		String data = "select  Data, Data_serwisu, Tytul, Powod, Co_Zrobiono, Kto,Sciezka_1,Sciezka_2  from serwisowane where Nr_Maszyny = '"+Nazwa_nazwa+"'";
+		String data = "select ID, Data, Data_serwisu, Tytul, Powod, Co_Zrobiono, Kto,Sciezka_1,Sciezka_2  from serwisowane where Nr_Maszyny = '"+Nazwa_nazwa+"'";
 		PreparedStatement pst;
 		try {
 			
@@ -334,6 +334,7 @@ public class Service extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				
 					Notice notka = new Notice(Nazwa_nazwa, Dzial.getText(), Nr_maszyny.getText());
+					System.out.println("Nazwa Nazwa: " + Nazwa_nazwa);
 					notka.setVisible(true);
 			
 			}
@@ -360,22 +361,24 @@ public class Service extends JFrame {
 	
 
 		// EVENT CLICK ON SELECTED ROW
-		
+		 // klikniecie w ktorakolwiek komorke powoduje odpalenie obiektu
+		// Notice_podglad, gdzie mozna tylko USUNAC dana notatke
 		Table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
 	        public void valueChanged(ListSelectionEvent event) {
 	        	if( event.getValueIsAdjusting()) 
 	        	{
-		            String Data = Table.getValueAt(Table.getSelectedRow(), 0).toString();
-		            String Data_serwisu = Table.getValueAt(Table.getSelectedRow(), 1).toString();
-		            String Tytul = Table.getValueAt(Table.getSelectedRow(), 2).toString();
-		            String Powod = Table.getValueAt(Table.getSelectedRow(), 3).toString();		  
-		            String Rozwiazanie = Table.getValueAt(Table.getSelectedRow(), 4).toString();
-		            String Serwisant = Table.getValueAt(Table.getSelectedRow(), 5).toString();
-		            String Sciezka1 = Table.getValueAt(Table.getSelectedRow(), 6).toString();
-		            String Sciezka2 = Table.getValueAt(Table.getSelectedRow(), 7).toString();
+	        		String ID = Table.getValueAt(Table.getSelectedRow(), 0).toString();
+		            String Data = Table.getValueAt(Table.getSelectedRow(), 1).toString();
+		            String Data_serwisu = Table.getValueAt(Table.getSelectedRow(), 2).toString();
+		            String Tytul = Table.getValueAt(Table.getSelectedRow(), 3).toString();
+		            String Powod = Table.getValueAt(Table.getSelectedRow(), 4).toString();		  
+		            String Rozwiazanie = Table.getValueAt(Table.getSelectedRow(), 5).toString();
+		            String Serwisant = Table.getValueAt(Table.getSelectedRow(), 6).toString();
+		            String Sciezka1 = Table.getValueAt(Table.getSelectedRow(), 7).toString();
+		            String Sciezka2 = Table.getValueAt(Table.getSelectedRow(), 8).toString();
 
 
-		            Notice_podglad poglad = new Notice_podglad(Nazwa_maszyny.getText(),Data,Data_serwisu,Tytul,Powod,Rozwiazanie,Serwisant, Dzial.getText(),Nr_maszyny.getText(),Sciezka1,Sciezka2);
+		            Notice_podglad poglad = new Notice_podglad(Nazwa_maszyny.getText(),"",Data_serwisu,Tytul,Powod,Rozwiazanie,Serwisant, Dzial.getText(),Nr_maszyny.getText(),Sciezka1,Sciezka2,ID);
 		            poglad.setVisible(true);
 	            
 	        	}	            

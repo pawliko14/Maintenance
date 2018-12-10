@@ -81,18 +81,21 @@ public class Serwisant_podglad extends JFrame {
 		Table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 				if (event.getValueIsAdjusting()) {
+					String ID = Table.getValueAt(Table.getSelectedRow(), 0).toString();
+					String Nr_maszyny = Table.getValueAt(Table.getSelectedRow(), 1).toString();
+
 					String Data = "";
 					// String Data = Table.getValueAt(Table.getSelectedRow(), ).toString();
-					String Data_serwisu = Table.getValueAt(Table.getSelectedRow(), 2).toString();
-					String Tytul = Table.getValueAt(Table.getSelectedRow(), 1).toString();
-					String Powod = Table.getValueAt(Table.getSelectedRow(), 3).toString();
-					String Rozwiazanie = Table.getValueAt(Table.getSelectedRow(), 4).toString();
-					String Sciezka_1 = Table.getValueAt(Table.getSelectedRow(), 5).toString();
-					String Sciezka_2 = Table.getValueAt(Table.getSelectedRow(), 6).toString();
+					String Data_serwisu = Table.getValueAt(Table.getSelectedRow(), 3).toString();
+					String Tytul = Table.getValueAt(Table.getSelectedRow(), 2).toString();
+					String Powod = Table.getValueAt(Table.getSelectedRow(), 4).toString();
+					String Rozwiazanie = Table.getValueAt(Table.getSelectedRow(), 5).toString();
+					String Sciezka_1 = Table.getValueAt(Table.getSelectedRow(), 6).toString();
+					String Sciezka_2 = Table.getValueAt(Table.getSelectedRow(), 7).toString();
 					// String Serwisant = Table.getValueAt(Table.getSelectedRow(), 5).toString();
 
-					Notice_podglad poglad = new Notice_podglad(Nazwa_maszyny, Data, Data_serwisu, Tytul, Powod,
-							Rozwiazanie, serwisancik, Wydzial, Kod_maszyny,Sciezka_1,Sciezka_2);
+					Notice_podglad poglad = new Notice_podglad(Nr_maszyny, Data, Data_serwisu, Tytul, Powod,
+							Rozwiazanie, serwisancik, Wydzial, Kod_maszyny,Sciezka_1,Sciezka_2, ID);
 					poglad.setVisible(true);
 
 				}
@@ -129,7 +132,7 @@ public class Serwisant_podglad extends JFrame {
 
 	public static void Refresh(String serwisancik) {
 		connection = MaintenanceConnection.dbConnector("tosia", "1234");
-		String data = "select Nr_maszyny,Tytul,Data_serwisu,Powod,Co_Zrobiono,Sciezka_1, Sciezka_2 from serwisowane where Kto = '"
+		String data = "select ID,Nr_maszyny,Tytul,Data_serwisu,Powod,Co_Zrobiono,Sciezka_1, Sciezka_2 from serwisowane where Kto = '"
 				+ serwisancik + "' ";
 		PreparedStatement pst;
 		try {
@@ -151,8 +154,10 @@ public class Serwisant_podglad extends JFrame {
 		TableColumn column = null;
 		for (int i = 0; i < Table.getColumnCount(); i++) {
 			column = Table.getColumnModel().getColumn(i);
-			if (i == 1)
+			if (i == 2)
 				column.setPreferredWidth(170);
+			else if(i ==0)
+				column.setPreferredWidth(10);
 			else
 				column.setPreferredWidth(20);
 
